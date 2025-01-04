@@ -32,7 +32,7 @@ The **likelihood_function.ipynb** notebook was for my understanding of the likel
 
 ## _slides_
 
-Contains two small project updates as PowerPoint slides, as well as my group meeting as a zip file.
+Contains two small project updates as PowerPoint slides, as well as my group meeting as a PDF file.
 
 ## _synthetic_dataset_
 
