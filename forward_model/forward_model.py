@@ -5,6 +5,23 @@ from Bio.PDB import *
 from Bio.SeqUtils import seq1
 import pandas as pd
 
+# mapping for edge case named residues
+nonstandard_to_standard = {
+    'HIE': 'HIS',
+    'HID': 'HIS',
+    'HIP': 'HIS',
+    'HEZ': 'HIS',
+    'HDZ': 'HIS',
+    'CYM': 'CYS',
+    'CYZ': 'CYS',
+    'CYX': 'CYS',
+    # add more if needed
+}
+
+def map_nonstandard_residues(resname: str) -> str:
+    """Map nonstandard residue names to standard ones."""
+    return nonstandard_to_standard.get(resname, resname)
+
 #this function calculates the number of observable amides in a peptide
 def calc_observable_amides(peptide: str): 
     #if proline is in the first two residues, then there are no observable amides
@@ -257,8 +274,11 @@ def get_amino_acid_sequence(path_to_pdb: str):
         for chain in model:
             for residue in chain:
                 if residue.id[0] == ' ':
-                    three_letter_code = residue.resname
-                    one_letter_code = seq1(three_letter_code)
+                    # map nonstandard names to standard ones
+                    standard_resname = map_nonstandard_residues(residue.resname)
+                        #three_letter_code = residue.resname
+                        #one_letter_code = seq1(three_letter_code)
+                    one_letter_code = seq1(standard_resname)
                     sequence += one_letter_code
     return sequence
 
