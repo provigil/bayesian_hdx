@@ -15,6 +15,8 @@ nonstandard_to_standard = {
     'CYM': 'CYS',
     'CYZ': 'CYS',
     'CYX': 'CYS',
+    'ASH': 'ASP',
+    'GLH': 'GLU',
     # add more if needed
 }
 
