@@ -3,7 +3,7 @@ import subprocess
 import glob
 
 # Define the base directory to search for files
-base_directory = '/Users/kehuang/Documents/projects/HDX/NIST_Fab/models/'
+base_directory = '/Users/kehuang/Documents/GitHub/bayesian_hdx/forward_model/'
 
 # Define the file extension to search for
 file_extension = '*.pdb'
@@ -22,7 +22,7 @@ for file_path in input_files:
 common_args = [
     'python', 'run_forward_model.py',
     '-d', '0.8',
-    '-t', '0', '30', '60', '180', '600', '1800', '3600', '7200',
+    '-t', '0', '30', '60', '300', '900', '3600', '14400', '84600',
     '-p', '7',
     '-temp', '300',
     '-l', 'pep_list.txt'

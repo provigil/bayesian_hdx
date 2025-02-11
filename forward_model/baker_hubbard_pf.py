@@ -132,7 +132,7 @@ def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
     return protection_factors
 
 # Function to return the protection factors. Input is a pdb file and the bc and bh values, output is a dictionary of residue number and protection factor 
-def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
+def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=6.5):
     
     with open(file_path, 'r') as f:
         pdb_files = [line.strip() for line in f]
@@ -161,34 +161,34 @@ def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5
 
     return average_protection_factors
 
-def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
-    with open(file_path, 'r') as f:
-        pdb_files = [line.strip() for line in f]
+#def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
+#    with open(file_path, 'r') as f:
+#        pdb_files = [line.strip() for line in f]
 
-    residue_protection_sums = {}
-    residue_counts = {}
+#    residue_protection_sums = {}
+#    residue_counts = {}
 
-    for pdb_file in pdb_files:
-        if not os.path.isfile(pdb_file):
-            print(f"File not found: {pdb_file}")
-            continue
+#    for pdb_file in pdb_files:
+#        if not os.path.isfile(pdb_file):
+#            print(f"File not found: {pdb_file}")
+#            continue
         
-        structure = load_pdb_bio(pdb_file)
-        contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold=distance_threshold)
-        h_bond_counts = calculate_hbond_number(pdb_file)
+#        structure = load_pdb_bio(pdb_file)
+#        contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold=distance_threshold)
+#        h_bond_counts = calculate_hbond_number(pdb_file)
         
-        for residue in contact_counts:
-            h_bond_count = h_bond_counts.get(residue, 0)
-            heavy_atom_count = contact_counts[residue]
-            protection_factor = bh * h_bond_count + bc * heavy_atom_count
+#        for residue in contact_counts:
+#            h_bond_count = h_bond_counts.get(residue, 0)
+#            heavy_atom_count = contact_counts[residue]
+#            protection_factor = bh * h_bond_count + bc * heavy_atom_count
             
-            if residue not in residue_protection_sums:
-                residue_protection_sums[residue] = 0
-                residue_counts[residue] = 0
+#            if residue not in residue_protection_sums:
+#                residue_protection_sums[residue] = 0
+#                residue_counts[residue] = 0
             
-            residue_protection_sums[residue] += protection_factor
-            residue_counts[residue] += 1
+#            residue_protection_sums[residue] += protection_factor
+#            residue_counts[residue] += 1
 
-    average_protection_factors = {residue: residue_protection_sums[residue] / residue_counts[residue] for residue in residue_protection_sums}
+#    average_protection_factors = {residue: residue_protection_sums[residue] / residue_counts[residue] for residue in residue_protection_sums}
 
-    return average_protection_factors
+#    return average_protection_factors

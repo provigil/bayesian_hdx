@@ -7,17 +7,7 @@ import pandas as pd
 
 # mapping for edge case named residues
 nonstandard_to_standard = {
-    'HIE': 'HIS',
-    'HID': 'HIS',
-    'HIP': 'HIS',
-    'HEZ': 'HIS',
-    'HDZ': 'HIS',
-    'CYM': 'CYS',
-    'CYZ': 'CYS',
-    'CYX': 'CYS',
-    'ASH': 'ASP',
-    'GLH': 'GLU',
-    # add more if needed
+    'HIE': 'HIS','HID':'HIS','HIP':'HIS','HEZ': 'HIS','HDZ': 'HIS','CYM': 'CYS','CYZ': 'CYS','CYX': 'CYS','ASH': 'ASP','GLH': 'GLU',
 }
 
 def map_nonstandard_residues(resname: str) -> str:
@@ -377,7 +367,7 @@ def calc_incorporated_deuterium(peptide_list: str, deuterium_fraction: float, ti
     - pH: pH value for intrinsic rate calculation
     - temperature: Temperature for intrinsic rate calculation
     - path_to_pdb: Path to the PDB file
-    -peptide_list: Text file containing list of peptides
+    - peptide_list: Text file containing list of peptides
 
     Returns:
     - Pandas dataframe of peptide and %D at each time point

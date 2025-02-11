@@ -1,97 +1,97 @@
 #!/bin/bash
 
-# Define the range for the output files
-start=1
-end=$(ls ../out*.csv | wc -l)
-
 # Define the input directory
 input_dir="../"
 
-#clean up from previous step
-rm ../example*.txt
+# Clean up from previous step
+#rm -f ${input_dir}/example*.txt
+
+# Define the range for the output files
+start=1
+end=$(ls ${input_dir}/out*.csv | wc -l)
 
 # Process each file in the range
 for i in $(seq $start $end); do
     
     # Iterate over the range of columns (11 to 17 in this example)
-    for col in {11..17}; do
+    for col in {2..8}; do
         # Create a temporary directory to store intermediate files
-        mkdir -p "../out-${col}"
+        mkdir -p "${input_dir}/out-${col}"
         # Extract the specified column and save it to a temporary file
-        awk -F, -v col="$col" 'NR>1 {print $col}' ../out${i}.csv > ../out-${col}/out${i}.txt
-        awk -F, -v col="$col" 'NR>1 {print $1}' ../out${i}.csv > ../out-${col}/peptide.dat
+        awk -F, -v col="$col" 'NR>1 {print $col}' ${input_dir}/out${i}.csv > ${input_dir}/out-${col}/out${i}.txt
+        awk -F, -v col="$col" 'NR>1 {print $1}' ${input_dir}/out${i}.csv > ${input_dir}/out-${col}/peptide.dat
 
         # Compute the reference column index
-        var=$((col - 9))
+        #var=$((col - 9))
+        var=$((col))
         
         # Extract reference data
-        awk -F, -v var="$var" 'NR>1 {print $var}' ../reference.csv > ../out-${col}/reference.txt
-        awk -F, -v var="$var" 'NR>1 {print $1}' ../reference.csv > ../out-${col}/reference_peptide.dat
-
+        awk -F, -v var="$var" 'NR>1 {print $var}' ${input_dir}/reference.csv > ${input_dir}/out-${col}/reference.txt
+        awk -F, -v var="$var" 'NR>1 {print $1}' ${input_dir}/reference.csv > ${input_dir}/out-${col}/reference_peptide.dat
     done
-
 done
 
 # Combine the columns side-by-side into the final output files and plot them
-for j in {11..17}; do
-    output_file="${col_temp_dir}/combined_data_col${col}.txt"
-    paste ../out-${j}/peptide.dat ../out-${j}/out*.txt > combined_data.txt
+for j in {2..8}; do
+    output_file="${input_dir}/out-${j}/combined_data_col${j}.txt"
+    paste ${input_dir}/out-${j}/out*.txt > ${input_dir}/out-${j}/combined_data.txt
 
-    cat > ../out-${j}/plot_col.py <<EOF
+cat > ${input_dir}/out-${j}/plot_col.py <<EOF
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
 
-# Read the combined data file
-df = pd.read_csv('combined_data.txt', sep='\t', header=None)
+# Paths to the input files
+calc_data = '${input_dir}/out-${j}/combined_data.txt'
+ref_data = '${input_dir}/out-${j}/reference.txt'
 
-# Read the reference data
-reference_df = pd.read_csv('../out-${j}/reference.txt', sep='\t', header=None)
-reference_labels = pd.read_csv('../out-${j}/reference_peptide.dat', sep='\t', header=None)[0]
+# Read the files
+data1 = pd.read_csv(calc_data, header=None, names=['Data1'])
+data2 = pd.read_csv(ref_data, header=None, names=['Data2'])
 
-# Extract the first column for labels
-labels = df.iloc[:, 0]
+# Ensure both datasets have the same length
+min_length = min(len(data1), len(data2))
+data1 = data1.iloc[:min_length]
+data2 = data2.iloc[:min_length]
 
-# Set the first column as the index (assuming it contains the labels)
-df.set_index(df.columns[0], inplace=True)
+# Calculate correlation
+correlation = data1['Data1'].corr(data2['Data2'])
+print(f'Correlation coefficient: {correlation}')
 
-# Select only columns from 2 to 6
-df = df.iloc[:, 1:6]
+# Calculate the R-squared value for the ideal line y = x
+r_value = correlation
+print(f'R: {r_value}')
 
-# Plot each column (starting from the second column)
-plt.figure(figsize=(10, 6))
+# Define the range for the axes
+x = np.linspace(0, 18, 25)
 
-# Use a range based on the row count for the X-axis
-x_values = range(len(df))
+# Plot the perfect diagonal line (y = x)
+plt.figure(figsize=(10, 10))
+plt.plot(x, x, 'r', label='Perfect line (y = x)')
 
-# Ensure reference_df has the same length as x_values
-min_length = min(len(x_values), len(reference_df[0]))
-x_values = x_values[:min_length]
-reference_data = reference_df[0][:min_length]
+# Plot the data points
+plt.scatter(data1['Data1'], data2['Data2'], label='Data points')
 
-for col in df.columns:
-    plt.plot(x_values, df[col][:min_length], marker='o', label=col)
+# Set the limits for the axes
+plt.xlim(0, 18)
+plt.ylim(0, 25)
 
-# Plot reference data as circles
-plt.plot(x_values, reference_data, 'o', label='Reference', markersize=5, color='red')
-
-# Annotate each point with the label from the first column
-annotated_labels = set()
-for i, label in enumerate(labels):
-    if label not in annotated_labels:
-        plt.annotate(label, (i, df.iloc[i, 0]), textcoords="offset points", xytext=(0,5), ha='center', rotation=90, fontsize='small')
-        annotated_labels.add(label)
+# Annotate the differences
+for i in range(len(data1)):
+    plt.plot([data1['Data1'].iloc[i], data1['Data1'].iloc[i]], [data2['Data2'].iloc[i], data1['Data1'].iloc[i]], 'b--')
 
 # Adding labels and title
-plt.xlabel('Row Number')
-plt.ylabel('Values')
-plt.title('Line Graph with Multiple Columns (Columns 2 to 6)')
+plt.xlabel('Data1')
+plt.ylabel('Data2')
 
 # Show the plot
+plt.grid(True)
 plt.show()
 EOF
 
-    python ../out-${j}/plot_col.py
+    python ${input_dir}/out-${j}/plot_col.py
 done
 
 # Clean up the temporary directories if needed
-# rm -r ../out-*
+# rm -r ${input_dir}/out-*
