@@ -30,25 +30,27 @@ def find_cut_sites(sequence):
     return cut_sites
 
 # generate all possible tryptic peptides from a protein sequence, but it is not efficient for large proteins so I didn't use it
+def generate_fragments(path_to_pdb: str):
+    sequence = get_protein_sequences_from_pdb(path_to_pdb)[0]
+    cut_sites = find_cut_sites(sequence)
+    n = len(cut_sites)
+    fragments = []
 
-# def generate_fragments(path_to_pdb:str):
-#     sequence = get_protein_sequences_from_pdb(path_to_pdb)[0]
-#     cut_sites = find_cut_sites(sequence)
-#     n = len(cut_sites)
-#     fragments = []
-
-#     # Generate all possible combinations of cut sites
-#     for i in range(n + 1):  # +1 to include the case with no cuts
-#         for combo in combinations(cut_sites, i):
-#             start = 0
-#             fragment = []
-#             for cut in combo:
-#                 fragment.append(sequence[start:cut])
-#                 start = cut
-#             fragment.append(sequence[start:])  # Add the last fragment
-#             fragments.extend([frag for frag in fragment if 5 <= len(frag) <= 20])
-#     #this removes all redundant fragments
-#     return set(fragments)
+    # Generate all possible combinations of cut sites
+    for i in range(n + 1):  # +1 to include the case with no cuts
+        for combo in combinations(cut_sites, i):
+            start = 0
+            fragment = []
+            for cut in combo:
+                if cut - start > 3:  # make site more than 3 residues long
+                    fragment.append(sequence[start:cut])
+                    start = cut
+            if len(sequence) - start > 3:
+                fragment.append(sequence[start:])  # Add the last fragment
+            fragments.extend([frag for frag in fragment if 5 <= len(frag) <= 20])
+    
+    # Remove all redundant fragments
+    return set(fragments)
 
 # def generate_fragments(path_to_pdb: str):
 #     sequence = get_protein_sequences_from_pdb(path_to_pdb)[0]
