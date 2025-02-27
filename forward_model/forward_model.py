@@ -439,31 +439,3 @@ def calc_incorporated_deuterium(peptide_list: str, deuterium_fraction: float, ti
         df[f'{time}_percent'] = (df[time] / df['Peptide'].apply(len)) * 100
     
     return df
-
-
-# def forward_model_sum(peptide: str, time: float, pH: float, temperature: float, path_to_pdb: str):
-#     total_sum = 0
-#     intrinsic_rates = get_sequence_intrinsic_rates(peptide, pH, temperature)
-#     pfs = get_peptide_protection_factors(peptide, path_to_pdb)
-#     observed = is_observable_amide(peptide)
-#     for i in range(len(peptide)):
-#         n = observed[i]
-#         if n == True:
-#             intrinsic_rate = intrinsic_rates[i]
-#             #pfs is a dictionary, so get the value of the key corresponding to i + 1
-#             log_protection_factor = pfs.get(i)
-#             protection_factor = np.exp(log_protection_factor)
-#             k_obs = intrinsic_rate / protection_factor
-#             total_sum += np.exp(-k_obs * time)
-#         else:
-#             total_sum += 0
-#     return total_sum
-
-# def calc_percentage_deuterium_per_peptide_hdxer(peptide: str, protection_factors: dict, deuteration_fraction: float, time: float, pH: float, temperature: float, path_to_pdb: str):
-#     #count true values in observable amides
-#     observable_amides = is_observable_amide(peptide)
-#     num_observable_amides = sum(observable_amides)
-#     deuteration_fraction = deuteration_fraction
-#     forward_sum = forward_model_sum_hdxer(peptide, protection_factors, time, pH, temperature, path_to_pdb)
-#     deuteration_fraction = deuteration_fraction * (num_observable_amides - forward_sum)
-#     return deuteration_fraction

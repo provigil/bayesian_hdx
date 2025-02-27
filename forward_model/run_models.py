@@ -21,10 +21,10 @@ for file_path in input_files:
 # Define the common arguments for the command
 common_args = [
     'python', 'run_forward_model.py',
-    '-d', '0.8',
+    '-d', '0.85',
     '-t', '0', '30', '60', '300', '900', '3600', '14400', '84600',
     '-p', '7',
-    '-temp', '300',
+    '-temp', '298',
     '-l', 'pep_list.txt'
 ]
 
