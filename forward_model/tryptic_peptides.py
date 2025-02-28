@@ -42,7 +42,7 @@ def generate_fragments(path_to_pdb: str):
             start = 0
             fragment = []
             for cut in combo:
-                if cut - start > 3:  # make site more than 3 residues long
+                if cut - start > 3:  # make the site more than 3 residues long
                     fragment.append(sequence[start:cut])
                     start = cut
             if len(sequence) - start > 3:
@@ -71,8 +71,6 @@ def generate_fragments(path_to_pdb: str):
 #         fragments.add(fragment)
 
 #     return fragments
-
-
 
 #takes in a list of peptide sequences and a protein sequence and outputs the start and end indices of the peptides in the protein sequence
 def find_peptide_indices(peptides, protein_sequence):

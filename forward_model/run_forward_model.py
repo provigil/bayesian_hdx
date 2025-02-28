@@ -1,7 +1,6 @@
 import argparse
 import numpy as np
-from forward_model import calc_incorporated_deuterium 
-import baker_hubbard_pf as bh
+from forward_model import calc_incorporated_deuterium
 import tryptic_peptides as tp
 
 def parse_arguments():
@@ -17,7 +16,7 @@ def parse_arguments():
     parser.add_argument('-temp', '--temperature', type=float, required=True, help="Temperature for intrinsic rate calculation")
     parser.add_argument('-f', '--file_path', type=str, required=True, help="Path to the text file containing PDB paths")
     parser.add_argument('-o', '--output', type=str, required=True, help="Output file path to save results")
-    parser.add_argument('-l', '--peptide_list', type=str, required=True, help="Text file containing list of peptides")
+    parser.add_argument('-l', '--peptide_list', type=str, required=False, help="Text file containing list of peptides")
 
     return parser.parse_args()
 
@@ -25,9 +24,17 @@ def main():
     #parse the arguments
     args = parse_arguments()
 
+    # Check if peptide_list is provided
+    if args.peptide_list:
+        # If provided, pass the peptide list file path directly
+        peptide_list = args.peptide_list
+    else:
+        # If not provided, generate the peptide list using a function from tryptic_peptides
+        peptide_list = tp.generate_peptide_list(args.file_path)
+
     #call calc_incorporated_deuterium from forward_model.py
     deuteration_df = calc_incorporated_deuterium(
-        peptide_list=args.peptide_list,
+        peptide_list=peptide_list,
         deuterium_fraction=args.deuterium_fraction,
         time_points=args.time_points,
         pH=args.pH,

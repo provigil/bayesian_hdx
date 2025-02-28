@@ -1,348 +1,9 @@
-from __future__ import print_function   #this has to be at the start
-import numpy as np
-    #import baker_hubbard_pf as bh
+import numpy
+import baker_hubbard_pf as bh
 import tryptic_peptides as tp
-import os
-import pandas as pd
-import mdtraj as md
-import itertools
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 from Bio.PDB import *
 from Bio.SeqUtils import seq1
-
-
-############################################################################################################
-# the following portion of the code is for the former baker_hubbard_pf.py file
-
-
-# Function to load a pdb file using mdtraj
-def load_pdb(pdb_file):
-    return md.load_pdb(pdb_file)
-
-# Function to load a pdb file using biopython 
-def load_pdb_bio(pdb_filename):
-    parser = PDBParser(QUIET=True)
-    structure = parser.get_structure('protein', pdb_filename)
-    return structure
-
-# Extract residues from hydrogen bonds that takes in a trajectory and hydrogen bonds
-def get_residues(t, hbond):
-    res1 = t.topology.atom(hbond[0]).residue.index
-    res2 = t.topology.atom(hbond[2]).residue.index
-    return [res1, res2]
-
-# Avoids double counting hydrogen bonds
-def drop_duplicate_hbonds(hbonds):
-    unique_hbonds = []
-    seen_pairs = set()
-    
-    for hbond in hbonds:
-        donor_acceptor_pair = (hbond[0], hbond[2])
-        if donor_acceptor_pair not in seen_pairs:
-            unique_hbonds.append(hbond)
-            seen_pairs.add(donor_acceptor_pair)
-    
-    return unique_hbonds
-
-# Calculate the number of hbonds using the baker hubbard method
-def calculate_hbond_number(path_to_pdb):
-    # Load trajectory
-    t = md.load_pdb(path_to_pdb)
-    # Calculate hydrogen bonds
-    hbonds = md.baker_hubbard(t, periodic=False)
-    
-    # Select first chain only 
-    chain = t.topology.chain(0)
-    residue_counts = {}
-    chain_residues = list(chain.residues)
-    chain_residue_indices = [residue.index for residue in chain_residues]
-
-    for hbond in hbonds:
-        # Donor atom index (first element in the hbond tuple)
-        donor_atom_index = hbond[0]
-        # Residue index of the donor atom
-        donor_residue = t.topology.atom(donor_atom_index).residue.index
-        if donor_residue in chain_residue_indices:
-            if donor_residue not in residue_counts:
-                residue_counts[donor_residue] = 0
-            residue_counts[donor_residue] += 1
-
-    # Add zeros for residues without hydrogen bonds
-    all_residues = set(chain_residue_indices)
-    residues_with_hbonds = set(residue_counts.keys())
-    residues_without_hbonds = all_residues - residues_with_hbonds
-    for res in residues_without_hbonds:
-        residue_counts[res] = 0
-
-    # Add 1 to all of the keys to match the residue numbering in the PDB file
-    residue_counts = {k + 1: v for k, v in residue_counts.items()}
-
-    return residue_counts
-
-# Sigmoid function
-def sigmoid_12_6(distance, k=1.0, d0=0.0):
-    return 1 / (1 + np.exp(-k * (distance - d0)))
-
-# Count heavy atom contacts using a sigmoid function
-def count_heavy_atom_contacts_sigmoid(structure, k=1, d0=0.0, distance_threshold=6.5):
-    
-    # Remove hydrogen atoms
-    atom_list = [atom for atom in structure.get_atoms() if atom.element not in ['H']]
-    
-    # Remove heteroatoms
-    atom_list = [atom for atom in atom_list if atom.get_parent().id[0] == ' ']
-    
-    ns = NeighborSearch(atom_list)
-    
-    contact_counts = {}
-    
-    for chain in structure.get_chains():
-        residues = list(chain)  
-        
-        for i, residue in enumerate(residues):
-            
-            if residue.id[0] != ' ': 
-                continue
-            
-            residue_atoms = [atom for atom in residue if atom.element not in ['H']]
-            if not residue_atoms:  # Skip residue if it has no heavy atoms
-                continue
-            
-            contacts = 0
-            # Get the amide nitrogen atoms of the residue 
-            residue_N = residue['N']
-            
-            # Find atoms within the distance threshold of the amide nitrogen atom
-            neighbors = ns.search(residue_N.coord, level='A', radius=distance_threshold)
-            
-            for neighbor in neighbors:
-                neighbor_residue = neighbor.get_parent()
-                neighbor_index = residues.index(neighbor_residue)
-                
-                # Exclude the same residue and residues i-1, i-2, i+1, i+2
-                if neighbor_residue != residue and abs(neighbor_index - i) > 2:
-                    distance = np.linalg.norm(neighbor.coord - residue_N.coord)
-                    # Apply the sigmoid to the heavy atom contact count
-                    contacts += sigmoid_12_6(distance, k, d0)
-            
-            # Store the contact count for the residue
-            contact_counts[residue] = contacts
-    
-    # Contact counts is a dictionary of residue number and contact count
-    contact_counts = {residue.id[1]: count for residue, count in contact_counts.items()}
-    
-    return contact_counts
-
-def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
-    protection_factors = {}
-    for residue in contacts:
-        protection_factors[residue] = bh*contacts[residue] + bc*hbonds[residue]
-    return protection_factors
-
-# Function to return the protection factors. Input is a pdb file and the bc and bh values, output is a dictionary of residue number and protection factor 
-def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=6.5):
-    
-    with open(file_path, 'r') as f:
-        pdb_files = [line.strip() for line in f]
-
-    residue_protection_sums = {}
-    residue_counts = {}
-
-    for pdb_file in pdb_files:
-        structure = load_pdb_bio(pdb_file)
-        contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold=distance_threshold)
-        h_bond_counts = calculate_hbond_number(pdb_file)
-        
-        for residue in contact_counts:
-            h_bond_count = h_bond_counts.get(residue, 0)
-            heavy_atom_count = contact_counts[residue]
-            protection_factor = bh * h_bond_count + bc * heavy_atom_count
-            
-            if residue not in residue_protection_sums:
-                residue_protection_sums[residue] = 0
-                residue_counts[residue] = 0
-            
-            residue_protection_sums[residue] += protection_factor
-            residue_counts[residue] += 1
-
-    average_protection_factors = {residue: residue_protection_sums[residue] / residue_counts[residue] for residue in residue_protection_sums}
-
-    return average_protection_factors
-
-#def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
-#    with open(file_path, 'r') as f:
-#        pdb_files = [line.strip() for line in f]
-
-#    residue_protection_sums = {}
-#    residue_counts = {}
-
-#    for pdb_file in pdb_files:
-#        if not os.path.isfile(pdb_file):
-#            print(f"File not found: {pdb_file}")
-#            continue
-        
-#        structure = load_pdb_bio(pdb_file)
-#        contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold=distance_threshold)
-#        h_bond_counts = calculate_hbond_number(pdb_file)
-        
-#        for residue in contact_counts:
-#            h_bond_count = h_bond_counts.get(residue, 0)
-#            heavy_atom_count = contact_counts[residue]
-#            protection_factor = bh * h_bond_count + bc * heavy_atom_count
-            
-#            if residue not in residue_protection_sums:
-#                residue_protection_sums[residue] = 0
-#                residue_counts[residue] = 0
-            
-#            residue_protection_sums[residue] += protection_factor
-#            residue_counts[residue] += 1
-
-#    average_protection_factors = {residue: residue_protection_sums[residue] / residue_counts[residue] for residue in residue_protection_sums}
-
-#    return average_protection_factors
-
-############################################################################################################
-# the following portion of the code is for the former tryptic_peptides.py file
-
-#get protein sequences from a pdb file using biopython
-def get_protein_sequences_from_pdb(path_to_pdb: str):
-    parser = PDBParser()
-    structure = parser.get_structure('protein', path_to_pdb)
-    sequences = []
-    for model in structure:
-        for chain in model:
-            sequence = ""
-            for residue in chain:
-                if residue.id[0] == ' ':
-                    three_letter_code = residue.resname
-                    one_letter_code = seq1(three_letter_code)
-                    sequence += one_letter_code
-            sequences.append(sequence)
-    return sequences
-
-#finds cut sites in a protein sequence for trypsin
-def find_cut_sites(sequence):
-    cut_sites = []
-    for i in range(len(sequence) - 1):
-        if sequence[i] in 'KR' and (i + 1 >= len(sequence) or sequence[i + 1] != 'P'):
-            cut_sites.append(i + 1)  # Cut after the K or R
-    return cut_sites
-
-# generate all possible tryptic peptides from a protein sequence, but it is not efficient for large proteins so I didn't use it
-def generate_fragments(path_to_pdb: str):
-    sequence = get_protein_sequences_from_pdb(path_to_pdb)[0]
-    cut_sites = find_cut_sites(sequence)
-    n = len(cut_sites)
-    fragments = []
-
-    # Generate all possible combinations of cut sites
-    for i in range(n + 1):  # +1 to include the case with no cuts
-        for combo in combinations(cut_sites, i):
-            start = 0
-            fragment = []
-            for cut in combo:
-                if cut - start > 3:  # make the site more than 3 residues long
-                    fragment.append(sequence[start:cut])
-                    start = cut
-            if len(sequence) - start > 3:
-                fragment.append(sequence[start:])  # Add the last fragment
-            fragments.extend([frag for frag in fragment if 5 <= len(frag) <= 20])
-    
-    # Remove all redundant fragments
-    return set(fragments)
-
-# def generate_fragments(path_to_pdb: str):
-#     sequence = get_protein_sequences_from_pdb(path_to_pdb)[0]
-#     cut_sites = find_cut_sites(sequence)
-#     fragments = set()
-
-#     # Generate fragments directly
-#     start = 0
-#     for cut in cut_sites:
-#         fragment = sequence[start:cut]
-#         if 5 <= len(fragment) <= 20:
-#             fragments.add(fragment)
-#         start = cut
-
-#     # Add the last fragment
-#     fragment = sequence[start:]
-#     if 5 <= len(fragment) <= 20:
-#         fragments.add(fragment)
-
-#     return fragments
-
-#takes in a list of peptide sequences and a protein sequence and outputs the start and end indices of the peptides in the protein sequence
-def find_peptide_indices(peptides, protein_sequence):
-    indices = []
-    for peptide in peptides:
-        start = protein_sequence.find(peptide)
-        end = start + len(peptide) - 1
-        indices.append((start, end))
-    return indices
-
-#takes in a single peptide sequence and a protein sequence and outputs the start and end indices of the peptide in the protein sequence
-def find_peptide_indices_single(peptide, protein_sequence):
-    indices = []
-    start = protein_sequence.find(peptide)
-    end = start + len(peptide) - 1
-    indices.append((start, end))
-    return indices
-
-def peptide_df(sequence,peptides):
-    peptide_df = pd.DataFrame(peptides, columns=['Peptide'])
-    peptide_df['Length'] = peptide_df['Peptide'].apply(len)
-    peptide_df['Start'] = peptide_df['Peptide'].apply(lambda x: sequence.find(x))
-    peptide_df['End'] = peptide_df['Start'] + peptide_df['Length'] - 1
-    return peptide_df
-
-# this fucntion takes in a native protein protein sequence and a list of peptide sequences and outputs a plot showing the overlap of the peptides with the protein sequence
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-
-#for visualization of petide coverage 
-def plot_peptide_overlaps(path_to_pdb:str):
-    # Get the protein sequence from the PDB file
-    sequence = get_protein_sequences_from_pdb(path_to_pdb)[0]
-    #need to uncomment the generate_fragments function to use this
-    fragments = generate_fragments(path_to_pdb)
-    peptides = find_peptide_indices(fragments, sequence)
-    
-    fig, ax = plt.subplots(figsize=(20, 3))
-    ax.set_xlim(0, len(sequence))
-    ax.set_ylim(0, 1)  # Set y-axis limit to 1 since we will plot non-overlapping fragments at the same height
-    ax.set_yticks([])
-    ax.set_xticks(range(len(sequence)))
-    ax.set_xticklabels(sequence)  # Set x-tick labels to the amino acid sequence
-    
-    # Plot the native sequence as a line
-    ax.plot(range(len(sequence)), [0.05] * len(sequence), color='black', lw=4)
-    
-    # Track the y-coordinates for each peptide
-    y_positions = [0.1]  # Start with the first y-coordinate
-    peptide_y_positions = []  # List to store y-coordinates of plotted peptides
-    
-    for start, end in peptides:
-        # Find a y-coordinate that does not overlap with existing peptides
-        for y in y_positions:
-            if all(not (start < e and end > s) for (s, e), y_pos in zip(peptides, peptide_y_positions) if y == y_pos):
-                break
-        else:
-            y = y_positions[-1] + 0.1  # Increment y-coordinate if no non-overlapping position is found
-            y_positions.append(y)
-        
-        peptide_y_positions.append(y)
-        rect = patches.Rectangle((start, y), end - start, 0.05, linewidth=1, edgecolor='r', facecolor='r', alpha=0.5)
-        ax.add_patch(rect)
-    
-    plt.title('Peptide Overlaps with Native Sequence')
-    plt.xlabel('Sequence')
-    plt.ylabel('Unique Tryptic Peptides')
-
-
-############################################################################################################
-# the following portion of the code is for the former forward_model.py file
-
+import pandas as pd
 
 # mapping for edge case named residues
 nonstandard_to_standard = {
@@ -383,12 +44,12 @@ def get_residue_neighbor_effects(AA, pDcorr, T):
     R = 1.987
 
     # Calculate Temp dependent pKa's
-    pK_D = -1 * np.log10(
-        10**(-1*4.48)*np.exp(-1*1000*((1.0/T-1.0/278)/R)))
-    pK_E = -1 * np.log10(
-        10**(-1*4.93)*np.exp(-1*1083*((1.0/T-1.0/278)/R)))
-    pK_H = -1 * np.log10(
-        10**(-1*7.42)*np.exp(-1*7500*((1.0/T-1.0/278)/R)))
+    pK_D = -1 * numpy.log10(
+        10**(-1*4.48)*numpy.exp(-1*1000*((1.0/T-1.0/278)/R)))
+    pK_E = -1 * numpy.log10(
+        10**(-1*4.93)*numpy.exp(-1*1083*((1.0/T-1.0/278)/R)))
+    pK_H = -1 * numpy.log10(
+        10**(-1*7.42)*numpy.exp(-1*7500*((1.0/T-1.0/278)/R)))
 
     eff_dict = {"A": (0.0, 0.0, 0.0, 0.0),
                 "R": (-0.59, -0.32, 0.07671225, 0.22),
@@ -414,46 +75,46 @@ def get_residue_neighbor_effects(AA, pDcorr, T):
     # PROTEINS: Structure, Function, and Genetics 28:325-332 (1997)
 
     if AA == "D":
-        ne0 = np.log10(
+        ne0 = numpy.log10(
             10**(-0.9-pDcorr)/(10**(-pK_D)+10**(-pDcorr))
             + 10**(0.9-pK_D)/(10**(-pK_D)+10**(-pDcorr)))
-        ne1 = np.log10(
+        ne1 = numpy.log10(
             10**(-0.12-pDcorr)/(10**(-pK_D)+10**(-pDcorr))
             + 10**(0.58-pK_D)/(10**(-pK_D)+10**(-pDcorr)))
-        ne2 = np.log10(
+        ne2 = numpy.log10(
             10**(0.69-pDcorr)/(10**(-pK_D)+10**(-pDcorr))
             + 10**(0.1-pK_D)/(10**(-pK_D)+10**(-pDcorr)))
-        ne3 = np.log10(
+        ne3 = numpy.log10(
             10**(0.6-pDcorr)/(10**(-pK_D)+10**(-pDcorr))
             + 10**(-0.18-pK_D)/(10**(-pK_D)+10**(-pDcorr)))
     elif AA == "E":
-        ne0 = np.log10(
+        ne0 = numpy.log10(
             10**(-0.6-pDcorr)/(10**(-pK_E)+10**(-pDcorr))
             + 10**(-0.9-pK_E)/(10**(-pK_E)+10**(-pDcorr)))
-        ne1 = np.log10(
+        ne1 = numpy.log10(
             10**(-0.27-pDcorr)/(10**(-pK_E)+10**(-pDcorr))
             + 10**(0.31-pK_E)/(10**(-pK_E)+10**(-pDcorr)))
-        ne2 = np.log10(
+        ne2 = numpy.log10(
             10**(0.24-pDcorr)/(10**(-pK_E)+10**(-pDcorr))
             + 10**(-0.11-pK_E)/(10**(-pK_E)+10**(-pDcorr)))
-        ne3 = np.log10(
+        ne3 = numpy.log10(
             10**(0.39-pDcorr)/(10**(-pK_E)+10**(-pDcorr))
             + 10**(-0.15-pK_E)/(10**(-pK_E)+10**(-pDcorr)))
     elif AA == "H":
-        ne0 = np.log10(
+        ne0 = numpy.log10(
             10**(-0.8-pDcorr)/(10**(-pK_H)+10**(-pDcorr))
             + 10**(0-pK_H)/(10**(-pK_H)+10**(-pDcorr)))
-        ne1 = np.log10(
+        ne1 = numpy.log10(
             10**(-0.51-pDcorr)/(10**(-pK_H)+10**(-pDcorr))
             + 10**(0-pK_H)/(10**(-pK_H)+10**(-pDcorr)))
-        ne2 = np.log10(
+        ne2 = numpy.log10(
             10**(0.8-pDcorr)/(10**(-pK_H)+10**(-pDcorr))
             + 10**(-0.1-pK_H)/(10**(-pK_H)+10**(-pDcorr)))
-        ne3 = np.log10(
+        ne3 = numpy.log10(
             10**(0.83-pDcorr)/(10**(-pK_H)+10**(-pDcorr))
             + 10**(0.14-pK_H)/(10**(-pK_H)+10**(-pDcorr)))
     elif AA == "CT":
-        ne0 = np.log10(
+        ne0 = numpy.log10(
             10**(0.05-pDcorr)/(10**(-pK_E)+10**(-pDcorr))
             + 10**(0.96-pK_E)/(10**(-pK_E)+10**(-pDcorr)))
         ne1 = ""
@@ -547,9 +208,9 @@ def calc_intrinsic_rate(Laa, Raa, pH, T, La2="A", Ra2="A", log=False):
 
     inv_dTR = (1./T-1./293)/R
 
-    FTa = np.exp(-1*EaA*inv_dTR)
-    FTb = np.exp(-1*EaB*inv_dTR)
-    FTw = np.exp(-1*EaW*inv_dTR)
+    FTa = numpy.exp(-1*EaA*inv_dTR)
+    FTb = numpy.exp(-1*EaB*inv_dTR)
+    FTw = numpy.exp(-1*EaW*inv_dTR)
     Dplus = 10**(-1*pDcorr)
     ODminus = 10**(pDcorr-pKD20c)
 
@@ -577,7 +238,7 @@ def calc_intrinsic_rate(Laa, Raa, pH, T, La2="A", Ra2="A", log=False):
 
 #from saltzberg 2016 
 def get_sequence_intrinsic_rates(seq, pH, T, log=False):
-    i_rates = np.zeros(len(seq))
+    i_rates = numpy.zeros(len(seq))
     i_rates[0] = calc_intrinsic_rate("NT", seq[0], pH, T)
     i_rates[1] = calc_intrinsic_rate(seq[0], seq[1], pH, T, La2="NT")
     for n in range(2, len(seq)-1):
@@ -589,8 +250,8 @@ def get_sequence_intrinsic_rates(seq, pH, T, log=False):
     i_rates[-1] = calc_intrinsic_rate(seq[-2], seq[-1], pH, T, Ra2="CT")
     if log:
         # Suppress divide by zero error.
-        with np.errstate(divide='ignore'):
-            i_rates = np.log10(i_rates)
+        with numpy.errstate(divide='ignore'):
+            i_rates = numpy.log10(i_rates)
 
         # print("LOG", seq, i_rates)
         return i_rates
@@ -599,7 +260,7 @@ def get_sequence_intrinsic_rates(seq, pH, T, log=False):
 
 #getting the full amino acid sequence from a pdb file using biopython 
 def get_amino_acid_sequence(path_to_pdb: str):
-    structure = load_pdb_bio(path_to_pdb)
+    structure = bh.load_pdb_bio(path_to_pdb)
     sequence = ""
     for model in structure:
         for chain in model:
@@ -631,7 +292,7 @@ def filter_protection_factors(peptide_indices: tuple, protection_factors: dict):
 #takes in peptide and path to pdb file and returns a dictionary of protection factors for the peptide
 def get_peptide_protection_factors(peptide: str, path_to_pdb: str):
     peptide_indices = find_peptide_in_full_sequence(peptide, path_to_pdb)
-    all_pfs = estimate_protection_factors(path_to_pdb)
+    all_pfs = bh.estimate_protection_factors(path_to_pdb)
     peptide_pfs = filter_protection_factors(peptide_indices, all_pfs)
     #reset the keys to start at 0
     pf = {key - peptide_indices[0] : value for key, value in peptide_pfs.items()}
@@ -672,7 +333,7 @@ def forward_model_sum_hdxer(peptide: str, protection_factors: dict,  time: float
             log_protection_factor = peptide_pf.get(i)
             protection_factor = np.exp(log_protection_factor)
             k_obs = intrinsic_rate / protection_factor
-            total_sum += np.exp(-k_obs * time)
+            total_sum += numpy.exp(-k_obs * time)
         else:
             total_sum += 0
     return total_sum
@@ -687,7 +348,7 @@ def calc_percentage_deuterium_per_peptide(peptide: str, deuteration_fraction: fl
 
 def get_peptide_protection_factors(peptide: str, path_to_pdb: str):
     peptide_indices = find_peptide_in_full_sequence(peptide, path_to_pdb)
-    all_pfs = estimate_protection_factors(path_to_pdb)
+    all_pfs = bh.estimate_protection_factors(path_to_pdb)
     peptide_pfs = filter_protection_factors(peptide_indices, all_pfs)
     #reset the keys to start at 0
     pf = {key - peptide_indices[0] : value for key, value in peptide_pfs.items()}
@@ -720,7 +381,7 @@ def calc_incorporated_deuterium(peptide_list: str, deuterium_fraction: float, ti
     with open(peptide_list, 'r') as f:
         all_peptides = [line.strip() for line in f]
 
-    all_pfs = estimate_protection_factors(file_path)
+    all_pfs = bh.estimate_protection_factors(file_path)
     full_sequence = get_amino_acid_sequence(path_to_pdb)
     
     #dictionary to store deuteration values for each time point
