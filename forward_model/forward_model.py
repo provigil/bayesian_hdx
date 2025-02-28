@@ -345,53 +345,58 @@ def get_peptide_protection_factors(peptide: str, path_to_pdb: str):
 
 #this is the main forward model function. Currently, it takes in a list of peptides and then searches the full sequence for the indices of that peptides 
 # which may be slow, so maybe we change this to take in a list of indices instead.
-def calc_incorporated_deuterium(peptide_list: str, deuterium_fraction: float, time_points: list, pH: float, temperature: float, file_path: str):
+def calc_incorporated_deuterium(peptide_list, deuterium_fraction: float, time_points: list, pH: float, temperature: float, file_path: str):
     """
     Calculates %D for all peptides at multiple time points.
 
     Parameters:
+    - peptide_list: List of peptides or path to the file containing list of peptides
     - deuterium_fraction: Fraction of deuterium incorporated
     - time_points: List of time points (float)
     - pH: pH value for intrinsic rate calculation
     - temperature: Temperature for intrinsic rate calculation
-    - path_to_pdb: Path to the PDB file
-    -peptide_list: Text file containing list of peptides
+    - file_path: Path to the text file containing PDB paths
 
     Returns:
     - Pandas dataframe of peptide and %D at each time point
     """ 
-    #open the file path and store the pdb paths in a list called path_list 
+    # Open the file path and store the pdb paths in a list called path_list 
     with open(file_path, 'r') as f:
         path_list = [line.strip() for line in f]
      
-    #select the first item of path_list 
+    # Select the first item of path_list 
     path_to_pdb = path_list[0]
-    with open(peptide_list, 'r') as f:
-        all_peptides = [line.strip() for line in f]
+    
+    # If peptide_list is a string (path to file), read the peptides from the file
+    if isinstance(peptide_list, str):
+        with open(peptide_list, 'r') as f:
+            all_peptides = [line.strip() for line in f]
+    else:
+        all_peptides = peptide_list
 
     all_pfs = bh.estimate_protection_factors(file_path)
     full_sequence = get_amino_acid_sequence(path_to_pdb)
     
-    #dictionary to store deuteration values for each time point
+    # Dictionary to store deuteration values for each time point
     deuteration_dict = {}
     deuteration_fraction = deuterium_fraction
 
-    #iterate over the time points
+    # Iterate over the time points
     for time in time_points:
         peptide_deuteration_dict = {}
 
-        #calculate forward model for each peptide for the current time point and add to dictionary 
+        # Calculate forward model for each peptide for the current time point and add to dictionary 
         for peptide in all_peptides:
             try:
-                #get intrinsic rates, peptide indices, and protection factors
+                # Get intrinsic rates, peptide indices, and protection factors
                 intrinsic_rates = get_sequence_intrinsic_rates(peptide, pH, temperature)
                 peptide_indices = find_peptide_in_full_sequence(peptide, full_sequence)
                 peptide_pf = filter_protection_factors(peptide_indices, all_pfs)
 
-                #adjusting indexing
+                # Adjusting indexing
                 pfs = {key - peptide_indices[0]: value for key, value in peptide_pf.items()}
 
-                #check observable amides and calculate deuteration fraction
+                # Check observable amides and calculate deuteration fraction
                 observable_amides = is_observable_amide(peptide)
                 num_observable_amides = sum(observable_amides)
                 total_sum = 0
@@ -401,28 +406,28 @@ def calc_incorporated_deuterium(peptide_list: str, deuterium_fraction: float, ti
                         intrinsic_rate = intrinsic_rates[i]
                         log_protection_factor = pfs.get(i, 0)  # Default to 0 if not found
                         protection_factor = np.exp(log_protection_factor) if log_protection_factor is not None else 1
-                        #observed rate is kint divided by protection factor
+                        # Observed rate is kint divided by protection factor
                         k_obs = intrinsic_rate / protection_factor
                         total_sum += np.exp(-k_obs * time)
 
-                #calculate deuteration fraction for the peptide at the current time point
+                # Calculate deuteration fraction for the peptide at the current time point
                 peptide_deuteration_fraction = deuteration_fraction * (num_observable_amides - total_sum)
                 peptide_deuteration_dict[peptide] = peptide_deuteration_fraction
             
-            #print error if peptide isn't found in the full sequence, but continue to the next peptide
+            # Print error if peptide isn't found in the full sequence, but continue to the next peptide
             except Exception as e:
                 print(f"Error processing peptide {peptide}: {e}")
                 continue
 
-        #add the peptide deuteration dictionary for the current time point to the main dictionary
+        # Add the peptide deuteration dictionary for the current time point to the main dictionary
         deuteration_dict[time] = peptide_deuteration_dict
         
-    #create a pandas dataframe with the peptide and the deuteration fraction at each time point as columns
+    # Create a pandas dataframe with the peptide and the deuteration fraction at each time point as columns
     df = pd.DataFrame(deuteration_dict)
     df.reset_index(inplace=True)
     df.rename(columns={'index': 'Peptide'}, inplace=True)
     
-    #for each time point, calculate percentage deuterium incorporated by dividing each number by the length of the peptide
+    # For each time point, calculate percentage deuterium incorporated by dividing each number by the length of the peptide
     for time in time_points:
         df[f'{time}_percent'] = (df[time] / df['Peptide'].apply(len)) * 100
     

@@ -29,6 +29,21 @@ def find_cut_sites(sequence):
             cut_sites.append(i + 1)  # Cut after the K or R
     return cut_sites
 
+def generate_tryptic_peptides(sequence):
+    """
+    Generate tryptic peptides from a protein sequence.
+
+    Parameters:
+    - sequence (str): The full amino acid sequence of the protein.
+
+    Returns:
+    - List of tryptic peptides
+    """
+    import re
+    # Split the sequence at K or R, but not if followed by P
+    peptides = re.split(r'(?<=[KR])(?!P)', sequence)
+    return peptides
+
 # generate all possible tryptic peptides from a protein sequence, but it is not efficient for large proteins so I didn't use it
 
 # def generate_fragments(path_to_pdb:str):

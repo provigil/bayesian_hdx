@@ -1,9 +1,9 @@
 import argparse
 import numpy as np
-from forward_model import calc_incorporated_deuterium 
+import pandas as pd
+from forward_model import calc_incorporated_deuterium, get_amino_acid_sequence
 import baker_hubbard_pf as bh
 import tryptic_peptides as tp
-
 
 
 def parse_arguments():
@@ -12,33 +12,47 @@ def parse_arguments():
     """
     parser = argparse.ArgumentParser(description="Calculate incorporated deuterium at multiple time points.")
     
-    #add arguments 
+    # Add arguments 
     parser.add_argument('-d', '--deuterium_fraction', type=float, required=True, help="Fraction of deuterium incorporated (float)")
     parser.add_argument('-t', '--time_points', type=float, nargs='+', required=True, help="List of time points (comma-separated floats)")
     parser.add_argument('-p', '--pH', type=float, required=True, help="pH value for intrinsic rate calculation")
     parser.add_argument('-temp', '--temperature', type=float, required=True, help="Temperature for intrinsic rate calculation")
     parser.add_argument('-f', '--file_path', type=str, required=True, help="Path to the text file containing PDB paths")
     parser.add_argument('-o', '--output', type=str, required=True, help="Output file path to save results")
-    parser.add_argument('-l', '--peptide_list', type=str, required=True, help="Text file containing list of peptides")
+    parser.add_argument('-l', '--peptide_list', type=str, help="Text file containing list of peptides (optional)")
 
     return parser.parse_args()
 
 def main():
-    #parse the arguments
+    # Parse the arguments
     args = parse_arguments()
 
-    #call calc_incorporated_deuterium from forward_model.py
+    # If peptide list is not provided, generate tryptic peptides
+    if args.peptide_list:
+        with open(args.peptide_list, 'r') as f:
+            peptide_list = [line.strip() for line in f]
+    else:
+        # Generate tryptic peptides from the PDB file
+        with open(args.file_path, 'r') as f:
+            path_list = [line.strip() for line in f]
+        path_to_pdb = path_list[0]
+        full_sequence = get_amino_acid_sequence(path_to_pdb)
+        peptide_list = tp.generate_tryptic_peptides(full_sequence)
+
+    # Filter out peptides that are too short
+    peptide_list = [pep for pep in peptide_list if len(pep) > 1]
+
+    # Call calc_incorporated_deuterium from forward_model.py
     deuteration_df = calc_incorporated_deuterium(
-        peptide_list=args.peptide_list,
+        peptide_list=peptide_list,
         deuterium_fraction=args.deuterium_fraction,
         time_points=args.time_points,
         pH=args.pH,
         temperature=args.temperature,
         file_path=args.file_path
     )
-    
 
-    #save the dataframe to a CSV file
+    # Save the dataframe to a CSV file
     try:
         deuteration_df.to_csv(args.output, index=False)
         print(f"Results have been saved to {args.output}")
