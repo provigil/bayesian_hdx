@@ -4,7 +4,7 @@ import pandas as pd
 from forward_model import calc_incorporated_deuterium, get_amino_acid_sequence
 import baker_hubbard_pf as bh
 import tryptic_peptides as tp
-
+from hdx_likelihood_function import calculate_sigma, total_likelihood, add_noised_data
 
 def parse_arguments():
     """
@@ -52,13 +52,27 @@ def main():
         file_path=args.file_path
     )
 
+    # Add synthetic 'noised' data to the DataFrame
+    deuteration_df = add_noised_data(deuteration_df, args.time_points)
+
+    print(deuteration_df)
+
+    # Calculate the total likelihood for each time point and add to DataFrame
+    peptide_avg_likelihoods, overall_likelihood = total_likelihood(deuteration_df)
+    
+    # Add the average likelihoods to the DataFrame
+    for peptide, avg_likelihood in peptide_avg_likelihoods.items():
+        deuteration_df.loc[deuteration_df['Peptide'] == peptide, 'Avg_Likelihood'] = avg_likelihood
+    
+    # Add the overall likelihood to the DataFrame
+    deuteration_df['Overall_Likelihood'] = overall_likelihood
+
     # Save the dataframe to a CSV file
     try:
         deuteration_df.to_csv(args.output, index=False)
         print(f"Results have been saved to {args.output}")
     except Exception as e:
         print(f"Error saving results to CSV: {e}")    
-    
 
 if __name__ == "__main__":
     main()
