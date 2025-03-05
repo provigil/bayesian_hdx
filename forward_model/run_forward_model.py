@@ -21,9 +21,8 @@ def parse_arguments():
     parser.add_argument('-f', '--file_path', type=str, required=True, help="Path to the text file containing PDB paths")
     parser.add_argument('-o', '--output', type=str, required=True, help="Output file path to save results")
     parser.add_argument('-l', '--peptide_list', type=str, help="Text file containing list of peptides (optional)")
-    parser.add_argument('-w', '--weights', type=float, nargs='+', help="List of weights for each structure (optional)")
-    parser.add_argument('-fp', '--file_paths', type=str, nargs='+', help="List of file paths for each structure (optional)")
-
+    parser.add_argument('-w', '--weights', type=str, help="Text file containing list of weights for each structure (optional)")
+    
     return parser.parse_args()
 
 def main():
@@ -35,7 +34,7 @@ def main():
         with open(args.peptide_list, 'r') as f:
             peptide_list = [line.strip() for line in f]
     else:
-        # make tryptic peptides from PDB
+        # make tryptic peptides from the PDB file
         with open(args.file_path, 'r') as f:
             path_list = [line.strip() for line in f]
         path_to_pdb = path_list[0]
@@ -45,51 +44,59 @@ def main():
     # Filter out peptides that are too short
     peptide_list = [pep for pep in peptide_list if len(pep) > 1]
 
-    # define which function to use
-    if args.weights and args.file_paths:
-        # Ensure the number of weights matches the number of file paths
-        if len(args.weights) != len(args.file_paths):
-            raise ValueError("The number of weights must match the number of file paths.")
-        
-        # Call calc_incorporated_deuterium_weighted from forward_model.py
-        deuteration_df = calc_incorporated_deuterium_weighted(
-            peptide_list=peptide_list,
-            deuterium_fraction=args.deuterium_fraction,
-            time_points=args.time_points,
-            pH=args.pH,
-            temperature=args.temperature,
-            file_paths=args.file_paths,
-            weights=args.weights
-        )
-    else:
-        # Call calc_incorporated_deuterium from forward_model.py
+    # Read the PDB paths from the input file
+    with open(args.file_path, 'r') as f:
+        pdb_paths = [line.strip() for line in f]
+
+    # Read the weights from the weights file if provided
+    weights = None
+    if args.weights:
+        with open(args.weights, 'r') as f:
+            weights = [float(line.strip()) for line in f]
+            if len(weights) != len(pdb_paths):
+                raise ValueError("The number of weights must match the number of PDB paths.")
+
+    deuteration_dfs = []
+
+    for i, pdb_path in enumerate(pdb_paths):
+        if weights:
+            weight = weights[i]
+        else:
+            weight = 1
+
         deuteration_df = calc_incorporated_deuterium(
             peptide_list=peptide_list,
             deuterium_fraction=args.deuterium_fraction,
             time_points=args.time_points,
             pH=args.pH,
             temperature=args.temperature,
-            file_path=args.file_path
+            file_path=pdb_path
         )
 
-    # Add synthetic 'noised' data to the DataFrame
-    deuteration_df = add_noised_data(deuteration_df, args.time_points)
+        deuteration_df['Weight'] = weight
+        deuteration_dfs.append(deuteration_df)
+    
+    # Concatenate all DataFrames
+    final_deuteration_df = pd.concat(deuteration_dfs, ignore_index=True)
 
-    print(deuteration_df)
+    # Add synthetic 'noised' data to the DataFrame
+    final_deuteration_df = add_noised_data(final_deuteration_df, args.time_points)
+
+    print(final_deuteration_df)
 
     # Calculate the total likelihood for each time point and add to DataFrame
-    peptide_avg_likelihoods, overall_likelihood = total_likelihood(deuteration_df)
+    peptide_avg_likelihoods, overall_likelihood = total_likelihood(final_deuteration_df)
     
     # Add the average likelihoods to the DataFrame
     for peptide, avg_likelihood in peptide_avg_likelihoods.items():
-        deuteration_df.loc[deuteration_df['Peptide'] == peptide, 'Avg_Likelihood'] = avg_likelihood
+        final_deuteration_df.loc[final_deuteration_df['Peptide'] == peptide, 'Avg_Likelihood'] = avg_likelihood
     
     # Add the overall likelihood to the DataFrame
-    deuteration_df['Overall_Likelihood'] = overall_likelihood
+    final_deuteration_df['Overall_Likelihood'] = overall_likelihood
 
     # Save the dataframe to a CSV file
     try:
-        deuteration_df.to_csv(args.output, index=False)
+        final_deuteration_df.to_csv(args.output, index=False)
         print(f"Results have been saved to {args.output}")
     except Exception as e:
         print(f"Error saving results to CSV: {e}")    
