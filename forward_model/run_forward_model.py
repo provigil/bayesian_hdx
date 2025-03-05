@@ -1,10 +1,11 @@
 import argparse
 import numpy as np
 import pandas as pd
-from forward_model import calc_incorporated_deuterium, get_amino_acid_sequence
+from forward_model import calc_incorporated_deuterium, calc_incorporated_deuterium_weighted, get_amino_acid_sequence
 import baker_hubbard_pf as bh
 import tryptic_peptides as tp
 from hdx_likelihood_function import calculate_sigma, total_likelihood, add_noised_data
+
 
 def parse_arguments():
     """
@@ -20,6 +21,8 @@ def parse_arguments():
     parser.add_argument('-f', '--file_path', type=str, required=True, help="Path to the text file containing PDB paths")
     parser.add_argument('-o', '--output', type=str, required=True, help="Output file path to save results")
     parser.add_argument('-l', '--peptide_list', type=str, help="Text file containing list of peptides (optional)")
+    parser.add_argument('-w', '--weights', type=float, nargs='+', help="List of weights for each structure (optional)")
+    parser.add_argument('-fp', '--file_paths', type=str, nargs='+', help="List of file paths for each structure (optional)")
 
     return parser.parse_args()
 
@@ -27,12 +30,12 @@ def main():
     # Parse the arguments
     args = parse_arguments()
 
-    # If peptide list is not provided, generate tryptic peptides
+    # fork if peptide list is not provided, generate tryptic peptides
     if args.peptide_list:
         with open(args.peptide_list, 'r') as f:
             peptide_list = [line.strip() for line in f]
     else:
-        # Generate tryptic peptides from the PDB file
+        # make tryptic peptides from PDB
         with open(args.file_path, 'r') as f:
             path_list = [line.strip() for line in f]
         path_to_pdb = path_list[0]
@@ -42,15 +45,32 @@ def main():
     # Filter out peptides that are too short
     peptide_list = [pep for pep in peptide_list if len(pep) > 1]
 
-    # Call calc_incorporated_deuterium from forward_model.py
-    deuteration_df = calc_incorporated_deuterium(
-        peptide_list=peptide_list,
-        deuterium_fraction=args.deuterium_fraction,
-        time_points=args.time_points,
-        pH=args.pH,
-        temperature=args.temperature,
-        file_path=args.file_path
-    )
+    # define which function to use
+    if args.weights and args.file_paths:
+        # Ensure the number of weights matches the number of file paths
+        if len(args.weights) != len(args.file_paths):
+            raise ValueError("The number of weights must match the number of file paths.")
+        
+        # Call calc_incorporated_deuterium_weighted from forward_model.py
+        deuteration_df = calc_incorporated_deuterium_weighted(
+            peptide_list=peptide_list,
+            deuterium_fraction=args.deuterium_fraction,
+            time_points=args.time_points,
+            pH=args.pH,
+            temperature=args.temperature,
+            file_paths=args.file_paths,
+            weights=args.weights
+        )
+    else:
+        # Call calc_incorporated_deuterium from forward_model.py
+        deuteration_df = calc_incorporated_deuterium(
+            peptide_list=peptide_list,
+            deuterium_fraction=args.deuterium_fraction,
+            time_points=args.time_points,
+            pH=args.pH,
+            temperature=args.temperature,
+            file_path=args.file_path
+        )
 
     # Add synthetic 'noised' data to the DataFrame
     deuteration_df = add_noised_data(deuteration_df, args.time_points)
