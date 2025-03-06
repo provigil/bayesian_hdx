@@ -37,66 +37,78 @@ def main():
         # make tryptic peptides from the PDB file
         with open(args.file_path, 'r') as f:
             path_list = [line.strip() for line in f]
-        path_to_pdb = path_list[0]
-        full_sequence = get_amino_acid_sequence(path_to_pdb)
+        
+        print(f"File paths read from {args.file_path}: {path_list}")  # Debugging line
+        
+        # For a single PDB file, extract the sequence
+        path_to_pdb = path_list[0]  # Assuming the first file path in the list is used
+        full_sequence = get_amino_acid_sequence(path_to_pdb)  # Get the sequence from the PDB
         peptide_list = tp.generate_tryptic_peptides(full_sequence)
 
     # Filter out peptides that are too short
     peptide_list = [pep for pep in peptide_list if len(pep) > 1]
 
-    # Read the PDB paths from the input file
-    with open(args.file_path, 'r') as f:
-        pdb_paths = [line.strip() for line in f]
-
-    # Read the weights from the weights file if provided
-    weights = None
+    # Check if weights file is provided and read the weights
     if args.weights:
         with open(args.weights, 'r') as f:
             weights = [float(line.strip()) for line in f]
-            if len(weights) != len(pdb_paths):
-                raise ValueError("The number of weights must match the number of PDB paths.")
+    else:
+        weights = None
 
-    deuteration_dfs = []
+    # Print debug information for file paths and weights
+    print(f"File path(s): {path_list}")  # Debugging line
+    print(f"Weights: {weights}")
 
-    for i, pdb_path in enumerate(pdb_paths):
-        if weights:
-            weight = weights[i]
-        else:
-            weight = 1
+    # Check if weights are provided for multiple PDB files
+    if weights and len(path_list) > 1:  # Use weights only for multiple PDB files
+        print(f"File path(s) for multi PDBs: {path_list}")  # Debugging line
+        # Ensure the number of weights matches the number of file paths
+        if len(weights) != len(path_list):
+            raise ValueError("The number of weights must match the number of file paths.")
+        # Call calc_incorporated_deuterium_weighted from forward_model.py
+        deuteration_df = calc_incorporated_deuterium_weighted(
+            peptide_list=peptide_list,
+            deuterium_fraction=args.deuterium_fraction,
+            time_points=args.time_points,
+            pH=args.pH,
+            temperature=args.temperature,
+            file_paths=path_list,
+            weights=weights
+        )
+    else:
+        # For single PDB file, ensure that full_sequence is set
+        file_path = args.file_path
+        full_sequence = get_amino_acid_sequence(file_path)  # Get sequence for single PDB file
 
+        print(f"File path(s) for single PDBs: {file_path}")  # Debugging line
         deuteration_df = calc_incorporated_deuterium(
             peptide_list=peptide_list,
             deuterium_fraction=args.deuterium_fraction,
             time_points=args.time_points,
             pH=args.pH,
             temperature=args.temperature,
-            file_path=pdb_path
+            file_path=file_path,  # Pass the single file path
+            full_sequence=full_sequence  # Ensure full_sequence is passed here
         )
 
-        deuteration_df['Weight'] = weight
-        deuteration_dfs.append(deuteration_df)
-    
-    # Concatenate all DataFrames
-    final_deuteration_df = pd.concat(deuteration_dfs, ignore_index=True)
-
     # Add synthetic 'noised' data to the DataFrame
-    final_deuteration_df = add_noised_data(final_deuteration_df, args.time_points)
+    deuteration_df = add_noised_data(deuteration_df, args.time_points)
 
-    print(final_deuteration_df)
+    print(deuteration_df)
 
     # Calculate the total likelihood for each time point and add to DataFrame
-    peptide_avg_likelihoods, overall_likelihood = total_likelihood(final_deuteration_df)
+    peptide_avg_likelihoods, overall_likelihood = total_likelihood(deuteration_df)
     
     # Add the average likelihoods to the DataFrame
     for peptide, avg_likelihood in peptide_avg_likelihoods.items():
-        final_deuteration_df.loc[final_deuteration_df['Peptide'] == peptide, 'Avg_Likelihood'] = avg_likelihood
+        deuteration_df.loc[deuteration_df['Peptide'] == peptide, 'Avg_Likelihood'] = avg_likelihood
     
     # Add the overall likelihood to the DataFrame
-    final_deuteration_df['Overall_Likelihood'] = overall_likelihood
+    deuteration_df['Overall_Likelihood'] = overall_likelihood
 
     # Save the dataframe to a CSV file
     try:
-        final_deuteration_df.to_csv(args.output, index=False)
+        deuteration_df.to_csv(args.output, index=False)
         print(f"Results have been saved to {args.output}")
     except Exception as e:
         print(f"Error saving results to CSV: {e}")    
