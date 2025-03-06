@@ -1,10 +1,10 @@
 import argparse
 import numpy as np
 import pandas as pd
-from forward_model import calc_incorporated_deuterium, get_amino_acid_sequence
-import baker_hubbard_pf as bh
-import tryptic_peptides as tp
-from hdx_likelihood_function import calculate_sigma, total_likelihood, add_noised_data
+from forward_model_mono import calc_incorporated_deuterium, get_amino_acid_sequence
+import baker_hubbard_pf_mono as bh
+import tryptic_peptide_mono as tp
+from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data
 
 def parse_arguments():
     """
