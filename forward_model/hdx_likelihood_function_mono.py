@@ -39,15 +39,19 @@ def total_likelihood(df: pd.DataFrame, a=-0.1, b=1.2, phi=0.85):
     list_of_peptides = set(df['Peptide'])
     time_points = ['0', '30', '60', '300', '900', '3600', '14400', '84600']
     replicate = ['1', '2', '3']
-    peptide_likelihoods = []
-    peptide_avg_likelihoods = {}
     
-    for peptide in list_of_peptides:
-        peptide_log_likelihood = 0
-        count = 0  # To count the number of valid likelihoods for averaging
+    peptide_avg_likelihoods_per_time = {time: {} for time in time_points}
+    overall_likelihood_per_time = {}
+    
+    for time in time_points:
+        time_float = float(time)  # Ensure time is in float format
+        total_log_likelihood_per_time = 0
+        valid_peptide_count = 0  # To count the number of valid peptides for averaging
         
-        for time in time_points:
-            time_float = float(time)  # Ensure time is in float format
+        for peptide in list_of_peptides:
+            peptide_log_likelihood = 0
+            count = 0  # To count the number of valid likelihoods for averaging
+            
             for rep in replicate:
                 d_exp = df[df['Peptide'] == peptide][f'{time_float}s_noised_{rep}'].iloc[0]
                 d_model = df[df['Peptide'] == peptide][time_float].iloc[0]
@@ -61,27 +65,27 @@ def total_likelihood(df: pd.DataFrame, a=-0.1, b=1.2, phi=0.85):
                 if noise_val > 0:
                     peptide_log_likelihood += -np.log(noise_val)
                     count += 1
-                    print(f"Peptide: {peptide}, Time: {time_float}, Replicate: {rep}, Noise: {noise_val}, Negative Log Likelihood: {peptide_log_likelihood}")
+                        #print(f"Peptide: {peptide}, Time: {time_float}, Replicate: {rep}, Noise: {noise_val}, Negative Log Likelihood: {peptide_log_likelihood}")
                 else:
                     peptide_log_likelihood += -np.inf  # Handle invalid values by adding negative infinity
                         #print(f"Peptide: {peptide}, Time: {time_float}, Replicate: {rep}, Noise: {noise_val} (Invalid)")
+            
+            # get the average likelihood for each peptide at this time point
+            if count > 0:
+                avg_likelihood = peptide_log_likelihood / count
+                    #print(f"Peptide: {peptide}, Time: {time_float}, Average Log Likelihood: {avg_likelihood}")
+                peptide_avg_likelihoods_per_time[time][peptide] = avg_likelihood
+                total_log_likelihood_per_time += avg_likelihood
+                valid_peptide_count += 1
+            else:
+                peptide_avg_likelihoods_per_time[time][peptide] = -np.inf
         
-        # get the average likelihood for each peptide
-        if count > 0:
-            avg_likelihood = peptide_log_likelihood / count
-            print(f"Peptide: {peptide}, Average Log Likelihood: {avg_likelihood}")
+        # get the overall average likelihood for this time point
+        if valid_peptide_count > 0:
+            overall_avg_likelihood = total_log_likelihood_per_time / valid_peptide_count
+            overall_likelihood_per_time[time] = overall_avg_likelihood
+            print(f"Overall Average Log Likelihood: {overall_avg_likelihood}, Time: {time_float}")
         else:
-            avg_likelihood = -np.inf  # If no valid likelihoods were found
-        
-        peptide_avg_likelihoods[peptide] = avg_likelihood
-        peptide_likelihoods.append(peptide_log_likelihood)
+            overall_likelihood_per_time[time] = -np.inf
     
-    # get sum likelihood divided by the count of peptides
-    total_peptides = len(peptide_likelihoods)
-    if total_peptides > 0:
-        overall_likelihood = sum(peptide_likelihoods) / total_peptides
-        print(f"Overall Average Log Likelihood: {overall_likelihood}")
-    else:
-        overall_likelihood = -np.inf  # If no peptides were found
-    
-    return peptide_avg_likelihoods, overall_likelihood
+    return peptide_avg_likelihoods_per_time, overall_likelihood_per_time
