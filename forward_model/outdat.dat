@@ -1,0 +1,194 @@
+stateU
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.269721230647587, Time: 30.0
+Overall Average Log Likelihood: 18.897478893479338, Time: 60.0
+Overall Average Log Likelihood: 14.818376111345332, Time: 300.0
+Overall Average Log Likelihood: 13.416846192334932, Time: 900.0
+Overall Average Log Likelihood: 11.986063431297625, Time: 3600.0
+Overall Average Log Likelihood: 9.135041677602725, Time: 14400.0
+Overall Average Log Likelihood: 7.7807369913694115, Time: 84600.0
+
+stateH
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 18.95662237528703, Time: 30.0
+Overall Average Log Likelihood: 17.520847189387663, Time: 60.0
+Overall Average Log Likelihood: 13.388521557045951, Time: 300.0
+Overall Average Log Likelihood: 9.283748302093981, Time: 900.0
+Overall Average Log Likelihood: 9.054533086725245, Time: 3600.0
+Overall Average Log Likelihood: 7.730538221581354, Time: 14400.0
+Overall Average Log Likelihood: 7.658423031036283, Time: 84600.0
+
+0.5/0.5
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.205612100337834, Time: 30.0
+Overall Average Log Likelihood: 16.4785047915969, Time: 60.0
+Overall Average Log Likelihood: 13.47770392941634, Time: 300.0
+Overall Average Log Likelihood: 12.288738788971516, Time: 900.0
+Overall Average Log Likelihood: 9.203221526262746, Time: 3600.0
+Overall Average Log Likelihood: 9.010561870471438, Time: 14400.0
+Overall Average Log Likelihood: 7.698245766255668, Time: 84600.0
+
+0.1/0.9
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 18.975412277961343, Time: 30.0
+Overall Average Log Likelihood: 16.391800059465247, Time: 60.0
+Overall Average Log Likelihood: 13.397523377306365, Time: 300.0
+Overall Average Log Likelihood: 9.357291369937663, Time: 900.0
+Overall Average Log Likelihood: 9.070200025979519, Time: 3600.0
+Overall Average Log Likelihood: 7.965032137434037, Time: 14400.0
+Overall Average Log Likelihood: 7.664611221768025, Time: 84600.0
+
+0.9/0.1
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.24758486591956, Time: 30.0
+Overall Average Log Likelihood: 18.88812248692866, Time: 60.0
+Overall Average Log Likelihood: 14.810209023973918, Time: 300.0
+Overall Average Log Likelihood: 13.40137817141277, Time: 900.0
+Overall Average Log Likelihood: 11.968609024144131, Time: 3600.0
+Overall Average Log Likelihood: 9.094925504935885, Time: 14400.0
+Overall Average Log Likelihood: 7.757952187650915, Time: 84600.0
+
+
+
+0.9/0.1 old noise
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.246937773232098, Time: 30.0
+Overall Average Log Likelihood: 17.714367712962975, Time: 60.0
+Overall Average Log Likelihood: 14.772272858357455, Time: 300.0
+Overall Average Log Likelihood: 13.425615838250668, Time: 900.0
+Overall Average Log Likelihood: 12.020779664460521, Time: 3600.0
+Overall Average Log Likelihood: 9.518223273394339, Time: 14400.0
+Overall Average Log Likelihood: 8.605321102009734, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.245874655483487, Time: 30.0
+Overall Average Log Likelihood: 17.229708747772058, Time: 60.0
+Overall Average Log Likelihood: 15.204082357069959, Time: 300.0
+Overall Average Log Likelihood: 13.45054273716264, Time: 900.0
+Overall Average Log Likelihood: 11.982253382579422, Time: 3600.0
+Overall Average Log Likelihood: 9.502312162916123, Time: 14400.0
+Overall Average Log Likelihood: 7.731499996585847, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.245921501812113, Time: 30.0
+Overall Average Log Likelihood: 17.63722444042458, Time: 60.0
+Overall Average Log Likelihood: 15.235939185403101, Time: 300.0
+Overall Average Log Likelihood: 13.40175932282037, Time: 900.0
+Overall Average Log Likelihood: 12.022303082266628, Time: 3600.0
+Overall Average Log Likelihood: 9.219291743297434, Time: 14400.0
+Overall Average Log Likelihood: 8.584507672546518, Time: 84600.0
+
+
+0.1/0.9 old noise
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 19.052412796703102, Time: 30.0
+Overall Average Log Likelihood: 16.303830630074625, Time: 60.0
+Overall Average Log Likelihood: 13.414668583391773, Time: 300.0
+Overall Average Log Likelihood: 9.475072272576789, Time: 900.0
+Overall Average Log Likelihood: 9.082099758495426, Time: 3600.0
+Overall Average Log Likelihood: 8.966139273910109, Time: 14400.0
+Overall Average Log Likelihood: 7.654694101802946, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 19.42835990652365, Time: 30.0
+Overall Average Log Likelihood: 16.324001335358652, Time: 60.0
+Overall Average Log Likelihood: 13.342757110091863, Time: 300.0
+Overall Average Log Likelihood: 9.406205898713512, Time: 900.0
+Overall Average Log Likelihood: 9.112648041584771, Time: 3600.0
+Overall Average Log Likelihood: 8.161296146343846, Time: 14400.0
+Overall Average Log Likelihood: 7.702720685537432, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 19.402589407344358, Time: 30.0
+Overall Average Log Likelihood: 15.539566006804266, Time: 60.0
+Overall Average Log Likelihood: 13.811905653839874, Time: 300.0
+Overall Average Log Likelihood: 9.392585052324819, Time: 900.0
+Overall Average Log Likelihood: 9.513251847600195, Time: 3600.0
+Overall Average Log Likelihood: 8.595715360928441, Time: 14400.0
+Overall Average Log Likelihood: 7.672249505247228, Time: 84600.0
+
+
+0.5/0.5 old noise
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.20168926920605, Time: 30.0
+Overall Average Log Likelihood: 16.886090359917297, Time: 60.0
+Overall Average Log Likelihood: 13.515899795160692, Time: 300.0
+Overall Average Log Likelihood: 13.014284388068742, Time: 900.0
+Overall Average Log Likelihood: 9.619024024075669, Time: 3600.0
+Overall Average Log Likelihood: 9.448357341835186, Time: 14400.0
+Overall Average Log Likelihood: 7.681838187418439, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.20317719629104, Time: 30.0
+Overall Average Log Likelihood: 16.114775890789186, Time: 60.0
+Overall Average Log Likelihood: 13.46843370034732, Time: 300.0
+Overall Average Log Likelihood: 12.17553299786587, Time: 900.0
+Overall Average Log Likelihood: 9.660098324779796, Time: 3600.0
+Overall Average Log Likelihood: 8.993694434590955, Time: 14400.0
+Overall Average Log Likelihood: 7.71025876270322, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.20913589375142, Time: 30.0
+Overall Average Log Likelihood: 17.29498720803465, Time: 60.0
+Overall Average Log Likelihood: 14.311269035232236, Time: 300.0
+Overall Average Log Likelihood: 12.533338542693356, Time: 900.0
+Overall Average Log Likelihood: 9.165477894636128, Time: 3600.0
+Overall Average Log Likelihood: 9.426413135524205, Time: 14400.0
+Overall Average Log Likelihood: 8.094848016662093, Time: 84600.0
+
+stateU old noise
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.25772724990189, Time: 30.0
+Overall Average Log Likelihood: 17.726527682257412, Time: 60.0
+Overall Average Log Likelihood: 14.813965576376443, Time: 300.0
+Overall Average Log Likelihood: 13.854081786361247, Time: 900.0
+Overall Average Log Likelihood: 11.975351956392478, Time: 3600.0
+Overall Average Log Likelihood: 9.585169312790358, Time: 14400.0
+Overall Average Log Likelihood: 9.003916504134201, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.285156468580293, Time: 30.0
+Overall Average Log Likelihood: 17.70783279555792, Time: 60.0
+Overall Average Log Likelihood: 15.270791685003752, Time: 300.0
+Overall Average Log Likelihood: 13.411005931694604, Time: 900.0
+Overall Average Log Likelihood: 12.446460595131748, Time: 3600.0
+Overall Average Log Likelihood: 9.596661928109677, Time: 14400.0
+Overall Average Log Likelihood: 8.555750029485116, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 20.264068210116935, Time: 30.0
+Overall Average Log Likelihood: 17.304998955622498, Time: 60.0
+Overall Average Log Likelihood: 14.816884086876108, Time: 300.0
+Overall Average Log Likelihood: 13.85316562659452, Time: 900.0
+Overall Average Log Likelihood: 12.05325379856517, Time: 3600.0
+Overall Average Log Likelihood: 9.142344766001024, Time: 14400.0
+Overall Average Log Likelihood: 8.166689317849906, Time: 84600.0
+
+
+stateH old noise
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 18.10356144661779, Time: 30.0
+Overall Average Log Likelihood: 16.7557451427542, Time: 60.0
+Overall Average Log Likelihood: 13.376949251270442, Time: 300.0
+Overall Average Log Likelihood: 9.33832952080253, Time: 900.0
+Overall Average Log Likelihood: 9.47314855936858, Time: 3600.0
+Overall Average Log Likelihood: 8.118859937549184, Time: 14400.0
+Overall Average Log Likelihood: 7.674284272295612, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 18.17109017541836, Time: 30.0
+Overall Average Log Likelihood: 15.872677924043218, Time: 60.0
+Overall Average Log Likelihood: 13.783101988942624, Time: 300.0
+Overall Average Log Likelihood: 9.326195833948596, Time: 900.0
+Overall Average Log Likelihood: 9.018652851821326, Time: 3600.0
+Overall Average Log Likelihood: 8.129788190225808, Time: 14400.0
+Overall Average Log Likelihood: 8.119045490888938, Time: 84600.0
+
+Overall Average Log Likelihood: 23.025850929940457, Time: 0.0
+Overall Average Log Likelihood: 18.97045746383803, Time: 30.0
+Overall Average Log Likelihood: 17.079060624871246, Time: 60.0
+Overall Average Log Likelihood: 13.416414650525697, Time: 300.0
+Overall Average Log Likelihood: 9.402537820109826, Time: 900.0
+Overall Average Log Likelihood: 9.0469183406313, Time: 3600.0
+Overall Average Log Likelihood: 7.6933212677750324, Time: 14400.0
+Overall Average Log Likelihood: 7.6294084200084065, Time: 84600.0
