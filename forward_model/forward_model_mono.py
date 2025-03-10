@@ -361,7 +361,10 @@ def calc_incorporated_deuterium_with_weights(peptide_list, deuterium_fraction: f
     num_pdbs = len(path_list)
     print(f"# of PDBs [calc_incorp v3]: {num_pdbs}")
 
-    if weights is None or len(weights) != num_pdbs:
+    # If only one PDB is provided, assume weight to be 1
+    if num_pdbs == 1:
+        weights = [1]
+    elif weights is None or len(weights) != num_pdbs:
         raise ValueError("Number of weights must match the number of PDB paths provided.")
 
     # Normalize weights to sum to 1
