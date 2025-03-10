@@ -42,6 +42,7 @@ def main():
         with open(args.file_path, 'r') as f:
             path_list = [line.strip() for line in f]
         path_to_pdb = path_list[0]
+        print(f"Call get_amino_acid_sequence 123")
         full_sequence = get_amino_acid_sequence(path_to_pdb)
         peptide_list = tp.generate_tryptic_peptides(full_sequence)
 
@@ -65,6 +66,8 @@ def main():
     elif num_pdb_files == 1:
         # Use a default weight of 1.0 if there is only one PDB file
         weights = [1.0]
+
+    print(f"moving to calc_incorp")
 
     # Call the new function to handle both single and multiple PDBs
     deuteration_df = calc_incorporated_deuterium_with_weights(

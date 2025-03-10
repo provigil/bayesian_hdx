@@ -15,10 +15,10 @@ def load_pdb(pdb_file):
 def load_pdb_bio(pdb_filename):
     # Load the PDB file
     parser = PDBParser(QUIET=True)
-    print(f"Trying to load PDB file: {pdb_filename}")
+    print(f"Trying to load PDB file [load_pdb_bio]: {pdb_filename}")
     try:
         structure = parser.get_structure('protein', pdb_filename)
-        print(f"Successfully loaded PDB file: {pdb_filename}")
+        print(f"Successfully loaded PDB file [load_pdb 2]: {pdb_filename}")
         return structure
     except FileNotFoundError as e:
         print(f"FileNotFoundError: {e}")
@@ -175,7 +175,7 @@ def estimate_protection_factors(file_path_or_list, bc=0.35, bh=2.0, distance_thr
     # Iterate over each PDB file
     for pdb_file in pdb_files:
         if pdb_file not in loaded_structures:
-            print(f"Loading structure from {pdb_file} v3")
+            print(f"load_pdb_bio {pdb_file} [estimate_protection_factors] v4")
             structure = load_pdb_bio(pdb_file)
             loaded_structures[pdb_file] = structure
         else:
