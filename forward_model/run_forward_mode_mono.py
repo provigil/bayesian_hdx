@@ -1,7 +1,7 @@
 import argparse
 import numpy as np
 import pandas as pd
-from forward_model_mono import calc_incorporated_deuterium, get_amino_acid_sequence
+from forward_model_mono import calc_incorporated_deuterium_with_weights, get_amino_acid_sequence
 import baker_hubbard_pf_mono as bh
 import tryptic_peptide_mono as tp
 from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data
@@ -18,6 +18,7 @@ def parse_arguments():
     parser.add_argument('-p', '--pH', type=float, required=True, help="pH value for intrinsic rate calculation")
     parser.add_argument('-temp', '--temperature', type=float, required=True, help="Temperature for intrinsic rate calculation")
     parser.add_argument('-f', '--file_path', type=str, required=True, help="Path to the text file containing PDB paths")
+    parser.add_argument('-w', '--weights', type=float, nargs='+', help="List of weights for the structures (optional, required if multiple PDB paths are provided)")
     parser.add_argument('-o', '--output', type=str, required=True, help="Output file path to save results")
     parser.add_argument('-l', '--peptide_list', type=str, help="Text file containing list of peptides (optional)")
 
@@ -42,14 +43,15 @@ def main():
     # Filter out peptides that are too short
     peptide_list = [pep for pep in peptide_list if len(pep) > 1]
 
-    # Call calc_incorporated_deuterium from forward_model.py
-    deuteration_df = calc_incorporated_deuterium(
+    # Call the new function to handle both single and multiple PDBs
+    deuteration_df = calc_incorporated_deuterium_with_weights(
         peptide_list=peptide_list,
         deuterium_fraction=args.deuterium_fraction,
         time_points=args.time_points,
         pH=args.pH,
         temperature=args.temperature,
-        file_path=args.file_path
+        file_path=args.file_path,
+        weights=args.weights
     )
 
     # Add synthetic 'noised' data to the DataFrame

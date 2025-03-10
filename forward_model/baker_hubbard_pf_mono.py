@@ -16,6 +16,7 @@ def load_pdb_bio(pdb_filename):
     # Load the PDB file
     parser = PDBParser(QUIET=True)
     structure = parser.get_structure('protein', pdb_filename)
+    print(f"Loaded PDB file: {pdb_filename}")
     return structure
 
 # extract residues from hydrogen bonds that takes in a trajectory and hydrogen bonds
@@ -140,21 +141,30 @@ def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
 
 #function to return the protection factors. input is a pdb file and the bc and bh values, output is a dictionary of residue number and protection factor 
 def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
+    print(f"Loading PDB files from {file_path} v1")
     
+    # Read the list of PDB filenames (assuming each line in file_path is a PDB file path)
     with open(file_path, 'r') as f:
-        pdb_files = [line.strip() for line in f]
+        pdb_files = [line.strip() for line in f.readlines() if line.strip()]
+    
+    print(f"Loaded {len(pdb_files)} PDB files v2")
 
     residue_protection_sums = {}
     residue_counts = {}
 
+    # Iterate over each PDB file
     for pdb_file in pdb_files:
+        print(f"Loading structure from {pdb_file} v3")
         structure = load_pdb_bio(pdb_file)
+        
+        # Calculate the contact counts and hydrogen bond counts for the current structure
         contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold)
         h_bond_counts = calculate_hbond_number(pdb_file)
         
+        # Iterate over the residues and calculate the protection factor
         for residue in contact_counts:
-            h_bond_count = h_bond_counts[residue]
-            heavy_atom_count = contact_counts[residue]
+            h_bond_count = h_bond_counts.get(residue, 0)
+            heavy_atom_count = contact_counts.get(residue, 0)
             protection_factor = bh * h_bond_count + bc * heavy_atom_count
             
             if residue not in residue_protection_sums:
@@ -164,9 +174,14 @@ def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5
             residue_protection_sums[residue] += protection_factor
             residue_counts[residue] += 1
 
-    average_protection_factors = {residue: residue_protection_sums[residue] / residue_counts[residue] for residue in residue_protection_sums}
+    # Calculate the average protection factor for each residue
+    average_protection_factors = {
+        residue: residue_protection_sums[residue] / residue_counts[residue]
+        for residue in residue_protection_sums
+    }
 
     return average_protection_factors
+
 
 
 def estimate_protection_factors_sigmoid(h_bonds, contact_counts, bc=0.35, bh=2.0):
