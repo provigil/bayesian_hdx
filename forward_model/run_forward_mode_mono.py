@@ -4,7 +4,7 @@ import pandas as pd
 from forward_model_mono import calc_incorporated_deuterium_with_weights, get_amino_acid_sequence
 import baker_hubbard_pf_mono as bh
 import tryptic_peptide_mono as tp
-from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data
+from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data, add_noised_data_benchmark, total_likelihood_benchmark, noise_model_benchmark
 
 def count_lines_in_file(file_path):
     with open(file_path, 'r') as file:
@@ -82,11 +82,15 @@ def main():
 
     # Add synthetic 'noised' data to the DataFrame
     deuteration_df = add_noised_data(deuteration_df, args.time_points)
+    # benchmarking behavior
+    #deuteration_df = add_noised_data_benchmark(deuteration_df, args.time_points)
 
     print(deuteration_df)
 
     # Calculate the total likelihood for each time point and add to DataFrame
-    peptide_avg_likelihoods, overall_likelihood = total_likelihood(deuteration_df)
+    #peptide_avg_likelihoods, overall_likelihood = total_likelihood(deuteration_df)
+    # benchmarking behavior- make sure to toggle this!
+    peptide_avg_likelihoods, overall_likelihood = total_likelihood_benchmark(deuteration_df)
     
     # Add the average likelihoods to the DataFrame
     for peptide, avg_likelihood in peptide_avg_likelihoods.items():
