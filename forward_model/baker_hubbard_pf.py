@@ -1,5 +1,4 @@
 from __future__ import print_function
-import os
 import matplotlib.pyplot as plt
 import itertools
 import mdtraj as md
@@ -8,16 +7,16 @@ import numpy as np
 import pandas as pd
 from Bio.PDB import PDBParser, NeighborSearch
 
-# function to load a pdb file using mdtraj
+#function to load a pdb file using mdtraj
 def load_pdb(pdb_file):
     return md.load_pdb(pdb_file)
 
-# load a pdb file using biopython 
+#load a pdb file using biopython 
 def load_pdb_bio(pdb_filename):
-    print(f"Loading PDB file: {pdb_filename}")  # Debugging line
+    # Load the PDB file
     parser = PDBParser(QUIET=True)
-    print(f"Attempting to load PDB file: {pdb_filename}")
     structure = parser.get_structure('protein', pdb_filename)
+    print(f"Loaded PDB file: {pdb_filename}")
     return structure
 
 # extract residues from hydrogen bonds that takes in a trajectory and hydrogen bonds
@@ -26,7 +25,7 @@ def get_residues(t, hbond):
     res2 = t.topology.atom(hbond[2]).residue.index
     return [res1, res2]
 
-# avoids double counting hydrogen bonds
+#avoids double counting hydrogen bonds
 def drop_duplicate_hbonds(hbonds):
     unique_hbonds = []
     seen_pairs = set()
@@ -39,23 +38,23 @@ def drop_duplicate_hbonds(hbonds):
     
     return unique_hbonds
 
-# calculate the number of hbonds using the baker hubbard method
+#calculate the number of hbonds using the baker hubbard method
 def calculate_hbond_number(path_to_pdb):
-    # load trajectory
+    #load trajectory
     t = md.load_pdb(path_to_pdb)
-    # calculate hydrogen bonds
+    #calculate hydrogen bonds
     hbonds = md.baker_hubbard(t, periodic=False)
     
-    # select first chain only 
+    #select first chain only 
     chain = t.topology.chain(0)
     residue_counts = {}
     chain_residues = list(chain.residues)
     chain_residue_indices = [residue.index for residue in chain_residues]
 
     for hbond in hbonds:
-        # donor atom index (first element in the hbond tuple)
+        #donor atom index (first element in the hbond tuple)
         donor_atom_index = hbond[0]
-        # residue index of the donor atom
+        #residue index of the donor atom
         donor_residue = t.topology.atom(donor_atom_index).residue.index
         if donor_residue in chain_residue_indices:
             if donor_residue not in residue_counts:
@@ -69,22 +68,28 @@ def calculate_hbond_number(path_to_pdb):
     for res in residues_without_hbonds:
         residue_counts[res] = 0
 
-    # add 1 to all of the keys to match the residue numbering in the PDB file
+    #add 1 to all of the keys to match the residue numbering in the PDB file
     residue_counts = {k + 1: v for k, v in residue_counts.items()}
 
     return residue_counts
 
-# sigmoid function
+# def calculate_center_of_mass(atoms):
+#     """Calculate the center of mass of a list of atoms."""
+#     total_mass = sum(atom.mass for atom in atoms)
+#     center_of_mass = np.sum([atom.coord * atom.mass for atom in atoms], axis=0) / total_mass
+#     return center_of_mass
+
+#sigmoid function
 def sigmoid_12_6(distance, k=1.0, d0=0.0):
     return 1 / (1 + np.exp(-k * (distance - d0)))
 
-# count heavy atom contacts using a sigmoid function
+#count heavy atom contacts using a sigmoid function
 def count_heavy_atom_contacts_sigmoid(structure, k=1, d0=0.0, distance_threshold=6.5):
     
-    # remove hydrogen atoms
+    #remove hydrogen atoms
     atom_list = [atom for atom in structure.get_atoms() if atom.element not in ['H']]
     
-    # remove heteroatoms
+    #remove heteroatoms
     atom_list = [atom for atom in atom_list if atom.get_parent().id[0] == ' ']
     
     ns = NeighborSearch(atom_list)
@@ -104,26 +109,26 @@ def count_heavy_atom_contacts_sigmoid(structure, k=1, d0=0.0, distance_threshold
                 continue
             
             contacts = 0
-            # get the amide nitrogen atoms of the residue 
+            #get the amide nitrogen atoms of the residue 
             residue_N = residue['N']
             
-            # find atoms within the distance threshold of the amide nitrogen atom
+            #find atoms within the distance threshold of the amide nitrogen atom
             neighbors = ns.search(residue_N.coord, level='A', radius=distance_threshold)
             
             for neighbor in neighbors:
                 neighbor_residue = neighbor.get_parent()
                 neighbor_index = residues.index(neighbor_residue)
                 
-                # exclude the same residue and residues i-1, i-2, i+1, i+2
+                #exclude the same residue and residues i-1, i-2, i+1, i+2
                 if neighbor_residue != residue and abs(neighbor_index - i) > 2:
                     distance = np.linalg.norm(neighbor.coord - residue_N.coord)
-                    # apply the sigmoid to the heavy atom contact count
+                    #apply the sigmoid to the heavy atom contact count
                     contacts += sigmoid_12_6(distance, k, d0)
             
-            # store the contact count for the residue
+            #store the contact count for the residue
             contact_counts[residue] = contacts
     
-    # contact counts is dictionary of residue number and contact count
+    #contact counts is dictionary of residue number and contact count
     contact_counts = {residue.id[1]: count for residue, count in contact_counts.items()}
     
     return contact_counts
@@ -134,53 +139,50 @@ def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
         protection_factors[residue] = bh*contacts[residue] + bc*hbonds[residue]
     return protection_factors
 
+#function to return the protection factors. input is a pdb file and the bc and bh values, output is a dictionary of residue number and protection factor 
 def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
-    try:
-        # Debugging to ensure correct file reading
-        print(f"Reading file paths from: {file_path}")
-        
-        # If file_path is a PDB file (ends with .pdb), treat it as a path to a single PDB file
-        if file_path.endswith('.pdb'):
-            pdb_files = [file_path]  # If it's a single PDB file, just use it as is
-        else:
-            with open(file_path, 'r') as f:
-                pdb_files = [line.strip() for line in f if line.strip()]  # Read paths from text file
+    if file_path.lower().endswith('.pdb'):
+        pdb_files = [file_path]
+    else:
+        print(f"Loading PDB files from {file_path} v1")
+        # Read the list of PDB filenames (assuming each line in file_path is a PDB file path)
+        with open(file_path, 'r') as f:
+            pdb_files = [line.strip() for line in f.readlines() if line.strip()]
 
-        print(f"File paths read from {file_path}: {pdb_files}")
+    print(f"Loaded {len(pdb_files)} PDB files v2")
 
-        residue_protection_sums = {}
-        residue_counts = {}
+    residue_protection_sums = {}
+    residue_counts = {}
 
-        # Iterate over the list of PDB files
-        for pdb_file in pdb_files:
-            print(f"Processing PDB file: {pdb_file}")  # Debugging line
-            structure = load_pdb_bio(pdb_file)  # Load structure from the PDB file
-            contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold)  # Heavy atom contacts
-            h_bond_counts = calculate_hbond_number(pdb_file)  # Hydrogen bonds
+    # Iterate over each PDB file
+    for pdb_file in pdb_files:
+        print(f"Loading structure from {pdb_file} v3")
+        structure = load_pdb_bio(pdb_file)
 
-            # Calculate protection factors for each residue
-            for residue in contact_counts:
-                h_bond_count = h_bond_counts.get(residue, 0)  # Get H-bond count or default to 0
-                heavy_atom_count = contact_counts[residue]  # Get heavy atom contact count
-                protection_factor = bh * h_bond_count + bc * heavy_atom_count
+        # Calculate the contact counts and hydrogen bond counts for the current structure
+        contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold)
+        h_bond_counts = calculate_hbond_number(pdb_file)
 
-                # Sum protection factors for each residue
-                if residue not in residue_protection_sums:
-                    residue_protection_sums[residue] = 0
-                    residue_counts[residue] = 0
+        # Iterate over the residues and calculate the protection factor
+        for residue in contact_counts:
+            h_bond_count = h_bond_counts.get(residue, 0)
+            heavy_atom_count = contact_counts.get(residue, 0)
+            protection_factor = bh * h_bond_count + bc * heavy_atom_count
 
-                residue_protection_sums[residue] += protection_factor
-                residue_counts[residue] += 1
+            if residue not in residue_protection_sums:
+                residue_protection_sums[residue] = 0
+                residue_counts[residue] = 0
 
-        # Calculate average protection factors
-        average_protection_factors = {residue: residue_protection_sums[residue] / residue_counts[residue] for residue in residue_protection_sums}
+            residue_protection_sums[residue] += protection_factor
+            residue_counts[residue] += 1
 
-        return average_protection_factors
+    # Calculate the average protection factor for each residue
+    average_protection_factors = {
+        residue: residue_protection_sums[residue] / residue_counts[residue]
+        for residue in residue_protection_sums
+    }
 
-    except FileNotFoundError as e:
-        print(f"Error: File not found - {e}")
-    except Exception as e:
-        print(f"Error: An unexpected error occurred - {e}")
+    return average_protection_factors
 
 
 
