@@ -6,6 +6,11 @@ import baker_hubbard_pf_mono as bh
 import tryptic_peptide_mono as tp
 from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data
 
+def count_lines_in_file(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        return len(lines)
+
 def parse_arguments():
     """
     Parse command line arguments using argparse.
@@ -42,6 +47,24 @@ def main():
 
     # Filter out peptides that are too short
     peptide_list = [pep for pep in peptide_list if len(pep) > 1]
+
+    # Print the number of PDB file paths and the number of weights
+    num_pdb_files = count_lines_in_file(args.file_path)
+    print(f"PDB file paths input [run_forward]: {num_pdb_files}")
+    num_weights = len(args.weights) if args.weights else 0
+    print(f"Number of weights [run_forward]: {num_weights}")
+
+    # Define which function to use
+    if num_pdb_files > 1:
+        # Ensure the number of weights matches the number of file paths
+        if num_weights != num_pdb_files:
+            raise ValueError("The number of weights must match the number of file paths.")
+        
+        # Use provided weights
+        weights = args.weights
+    elif num_pdb_files == 1:
+        # Use a default weight of 1.0 if there is only one PDB file
+        weights = [1.0]
 
     # Call the new function to handle both single and multiple PDBs
     deuteration_df = calc_incorporated_deuterium_with_weights(
