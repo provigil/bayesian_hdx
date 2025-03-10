@@ -141,12 +141,14 @@ def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
 
 #function to return the protection factors. input is a pdb file and the bc and bh values, output is a dictionary of residue number and protection factor 
 def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
-    print(f"Loading PDB files from {file_path} v1")
-    
-    # Read the list of PDB filenames (assuming each line in file_path is a PDB file path)
-    with open(file_path, 'r') as f:
-        pdb_files = [line.strip() for line in f.readlines() if line.strip()]
-    
+    if file_path.lower().endswith('.pdb'):
+        pdb_files = [file_path]
+    else:
+        print(f"Loading PDB files from {file_path} v1")
+        # Read the list of PDB filenames (assuming each line in file_path is a PDB file path)
+        with open(file_path, 'r') as f:
+            pdb_files = [line.strip() for line in f.readlines() if line.strip()]
+
     print(f"Loaded {len(pdb_files)} PDB files v2")
 
     residue_protection_sums = {}
@@ -156,21 +158,21 @@ def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5
     for pdb_file in pdb_files:
         print(f"Loading structure from {pdb_file} v3")
         structure = load_pdb_bio(pdb_file)
-        
+
         # Calculate the contact counts and hydrogen bond counts for the current structure
         contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold)
         h_bond_counts = calculate_hbond_number(pdb_file)
-        
+
         # Iterate over the residues and calculate the protection factor
         for residue in contact_counts:
             h_bond_count = h_bond_counts.get(residue, 0)
             heavy_atom_count = contact_counts.get(residue, 0)
             protection_factor = bh * h_bond_count + bc * heavy_atom_count
-            
+
             if residue not in residue_protection_sums:
                 residue_protection_sums[residue] = 0
                 residue_counts[residue] = 0
-            
+
             residue_protection_sums[residue] += protection_factor
             residue_counts[residue] += 1
 
