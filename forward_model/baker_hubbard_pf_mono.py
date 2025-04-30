@@ -15,10 +15,10 @@ def load_pdb(pdb_file):
 def load_pdb_bio(pdb_filename):
     # Load the PDB file
     parser = PDBParser(QUIET=True)
-    print(f"Trying to load PDB file [load_pdb_bio]: {pdb_filename}")
+    #print(f"Trying to load PDB file [load_pdb_bio]: {pdb_filename}")
     try:
         structure = parser.get_structure('protein', pdb_filename)
-        print(f"Successfully loaded PDB file [load_pdb 2]: {pdb_filename}")
+        #print(f"Successfully loaded PDB file [load_pdb 2]: {pdb_filename}")
         return structure
     except FileNotFoundError as e:
         print(f"FileNotFoundError: {e}")
@@ -147,24 +147,39 @@ def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
         protection_factors[residue] = bh*contacts[residue] + bc*hbonds[residue]
     return protection_factors
 
+def estimate_protection_factors_sigmoid(h_bonds, contact_counts, bc=0.35, bh=2.0):
+    """Estimate protection factors using the Best and Vendruscolo method."""
+    protection_factors = {}
+    h_bond_counts = {residue: 0 for residue in contact_counts.keys()}
+    for donor_residue, donor_atom, acceptor_residue, acceptor_atom in h_bonds:
+        h_bond_counts[donor_residue] += 1
+        h_bond_counts[acceptor_residue] += 1
+
+    for residue, h_bond_count in h_bond_counts.items():
+        heavy_atom_count = contact_counts[residue]
+        protection_factor = bh * h_bond_count + bc * heavy_atom_count
+        protection_factors[residue] = (h_bond_count, heavy_atom_count, protection_factor)
+
+    return protection_factors
+
 def estimate_protection_factors(file_path_or_list, bc=0.35, bh=2.0, distance_threshold=5):
     # Ensure input is a list of PDB files
     if isinstance(file_path_or_list, str):
         if file_path_or_list.lower().endswith('.pdb'):
             pdb_files = [file_path_or_list]
         else:
-            print(f"Loading files from {file_path_or_list} [estimate_protection_factors] v1")
+            #print(f"Loading files from {file_path_or_list} [estimate_protection_factors] v1")
             # Read the list of PDB filenames (assuming each line in file_path_or_list is a PDB file path)
             with open(file_path_or_list, 'r') as f:
                 pdb_files = [line.strip() for line in f.readlines() if line.strip()]
                 # Debugging: Print the list of PDB files
-                print(f"PDB files read from list [estimate_protection_factors] v2: {pdb_files}")
+                #print(f"PDB files read from list [estimate_protection_factors] v2: {pdb_files}")
     elif isinstance(file_path_or_list, list):
         pdb_files = file_path_or_list
     else:
         raise ValueError("Input must be a PDB filename, a file containing a list of PDB filenames, or a list of PDB filenames.")
 
-    print(f"Loaded {len(pdb_files)} PDB files [estimate_protection_factors] v3")
+    #print(f"Loaded {len(pdb_files)} PDB files [estimate_protection_factors] v3")
 
     residue_protection_sums = {}
     residue_counts = {}
@@ -175,7 +190,7 @@ def estimate_protection_factors(file_path_or_list, bc=0.35, bh=2.0, distance_thr
     # Iterate over each PDB file
     for pdb_file in pdb_files:
         if pdb_file not in loaded_structures:
-            print(f"load_pdb_bio {pdb_file} [estimate_protection_factors] v4")
+            #print(f"load_pdb_bio {pdb_file} [estimate_protection_factors] v4")
             structure = load_pdb_bio(pdb_file)
             loaded_structures[pdb_file] = structure
         else:
@@ -250,20 +265,3 @@ def estimate_protection_factors(file_path_or_list, bc=0.35, bh=2.0, distance_thr
 #     }
 
 #     return average_protection_factors
-
-
-
-def estimate_protection_factors_sigmoid(h_bonds, contact_counts, bc=0.35, bh=2.0):
-    """Estimate protection factors using the Best and Vendruscolo method."""
-    protection_factors = {}
-    h_bond_counts = {residue: 0 for residue in contact_counts.keys()}
-    for donor_residue, donor_atom, acceptor_residue, acceptor_atom in h_bonds:
-        h_bond_counts[donor_residue] += 1
-        h_bond_counts[acceptor_residue] += 1
-
-    for residue, h_bond_count in h_bond_counts.items():
-        heavy_atom_count = contact_counts[residue]
-        protection_factor = bh * h_bond_count + bc * heavy_atom_count
-        protection_factors[residue] = (h_bond_count, heavy_atom_count, protection_factor)
-
-    return protection_factors
