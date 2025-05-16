@@ -10,6 +10,29 @@ def count_lines_in_file(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
         return len(lines)
+    
+def load_experimental_csv(csv_path, time_points):
+    df = pd.read_csv(csv_path)
+    if 'peptide' not in df.columns:
+        raise KeyError("CSV must have a 'peptide' column")
+    df = df.rename(columns={'peptide': 'Peptide'})
+
+    new_cols = []
+    for t in time_points:
+        raw_col = str(t)  # matches your CSV headers: "0.0", "30.0", etc.
+        if raw_col not in df.columns:
+            raise KeyError(f"Expected CSV column '{raw_col}' not found in {csv_path}")
+
+        # build the percent‐column name your likelihood code expects:
+        #   int(0.0) -> 0,  int(30.0) -> 30, etc.
+        t_int   = int(float(t))
+        out_col = f"{t_int}.0_percent"  # e.g. "0.0_percent", "30.0_percent", ...
+
+        # scale the 0–1 fraction into 0–100
+        df[out_col] = df[raw_col]
+        new_cols.append(out_col)
+
+    return df[['Peptide'] + new_cols]
 
 def parse_arguments():
     """
@@ -61,7 +84,6 @@ def generate_deuteration_df(file_path, peptide_list, deuterium_fraction, time_po
     elif len(weights) != num_pdb_files:
         raise ValueError("The number of weights must match the number of file paths.")
 
-    
     # Return the DataFrame computed using your forward model function
     return calc_incorporated_deuterium_with_weights(
         peptide_list=peptides,
@@ -87,23 +109,28 @@ def main():
     else:
         exp_file, model_file = args.dual_file
         print("Dual‐file mode (exp vs. model)")
-        df_exp   = generate_deuteration_df(
-                       exp_file, args.peptide_list,
-                       args.deuterium_fraction, args.time_points,
-                       args.pH, args.temperature, args.weights)
+        # if the experimental data is already a CSV, load it directly
+        if exp_file.lower().endswith('.csv'):
+            df_exp = load_experimental_csv(exp_file, args.time_points)
+        else:
+            df_exp = generate_deuteration_df(
+                         exp_file, args.peptide_list,
+                         args.deuterium_fraction, args.time_points,
+                         args.pH, args.temperature, args.weights)
+
+        # model is still generated from structure(s)
         df_model = generate_deuteration_df(
-                       model_file, args.peptide_list,
-                       args.deuterium_fraction, args.time_points,
-                       args.pH, args.temperature, args.weights)
+                   model_file, args.peptide_list,
+                   args.deuterium_fraction, args.time_points,
+                   args.pH, args.temperature, args.weights)
 
     print("Experimental DataFrame:")
     print(df_exp)
     print("Model DataFrame (head):")
     print(df_model)
 
-    # run the likelihood test
-    peptide_lkhd, overall_time_lkhd, total_lkhd, avg_lkhd = \
-        total_likelihood_test(df_exp, df_model)
+    # run the likelihood function
+    peptide_lkhd, overall_time_lkhd, total_lkhd, avg_lkhd = total_likelihood_test(df_exp, df_model)
 
     # map per-time likelihoods back into df_exp
     for t, lkhd_map in peptide_lkhd.items():
@@ -118,89 +145,51 @@ def main():
     df_exp.to_csv(args.output, index=False)
     print(f"Results written to {args.output!r}") 
 
-if __name__ == "__main__":
-    main()
-
-# def main():
-#     # Parse the arguments
+# #this was for the benchmarking case with total_likelihood_test
+# def main_test():
 #     args = parse_arguments()
 
-#     # If peptide list is not provided, generate tryptic peptides
-#     if args.peptide_list:
-#         with open(args.peptide_list, 'r') as f:
-#             peptide_list = [line.strip() for line in f]
+#     # load one or two files
+#     if args.single_file:
+#         print("Single‐file mode (exp & model = same)")
+#         df_exp   = generate_deuteration_df(
+#                        args.single_file, args.peptide_list,
+#                        args.deuterium_fraction, args.time_points,
+#                        args.pH, args.temperature, args.weights)
+#         df_model = df_exp.copy()
 #     else:
-#         # Generate tryptic peptides from the PDB file
-#         with open(args.file_path, 'r') as f:
-#             path_list = [line.strip() for line in f]
-#         path_to_pdb = path_list[0]
-#         #print(f"Call get_amino_acid_sequence 123")
-#         full_sequence = get_amino_acid_sequence(path_to_pdb)
-#         peptide_list = tp.generate_tryptic_peptides(full_sequence)
+#         exp_file, model_file = args.dual_file
+#         print("Dual‐file mode (exp vs. model)")
+#         df_exp   = generate_deuteration_df(
+#                        exp_file, args.peptide_list,
+#                        args.deuterium_fraction, args.time_points,
+#                        args.pH, args.temperature, args.weights)
+#         df_model = generate_deuteration_df(
+#                        model_file, args.peptide_list,
+#                        args.deuterium_fraction, args.time_points,
+#                        args.pH, args.temperature, args.weights)
 
-#     # Filter out peptides that are too short
-#     peptide_list = [pep for pep in peptide_list if len(pep) > 1]
+#     print("Experimental DataFrame:")
+#     print(df_exp)
+#     print("Model DataFrame (head):")
+#     print(df_model)
 
-#     # Print the number of PDB file paths and the number of weights
-#     num_pdb_files = count_lines_in_file(args.file_path)
-#     #print(f"PDB file paths input [run_forward]: {num_pdb_files}")
-#     num_weights = len(args.weights) if args.weights else 0
-#     #print(f"Number of weights [run_forward]: {num_weights}")
+#     # run the likelihood function
+#     peptide_lkhd, overall_time_lkhd, total_lkhd, avg_lkhd = \
+#         total_likelihood_test(df_exp, df_model)
 
-#     # Define which function to use
-#     if num_pdb_files > 1:
-#         # Ensure the number of weights matches the number of file paths
-#         if num_weights != num_pdb_files:
-#             raise ValueError("The number of weights must match the number of file paths.")
-        
-#         # Use provided weights
-#         weights = args.weights
-#     elif num_pdb_files == 1:
-#         # Use a default weight of 1.0 if there is only one PDB file
-#         weights = [1.0]
+#     # map per-time likelihoods back into df_exp
+#     for t, lkhd_map in peptide_lkhd.items():
+#         df_exp[f"LogLKHD_{t}s"] = df_exp['Peptide'].map(lkhd_map)
 
-#     #print(f"moving to calc_incorp")
-
-
-#     # Call the new function to handle both single and multitotal_likelihood_benchmarkple PDBs
-#     deuteration_df = calc_incorporated_deuterium_with_weights(
-#         peptide_list=peptide_list,
-#         deuterium_fraction=args.deuterium_fraction,
-#         time_points=args.time_points,
-#         pH=args.pH,
-#         temperature=args.temperature,
-#         file_path=args.file_path,
-#         weights=args.weights
+#     # add overall per-time summary
+#     df_exp['Total_LKHD_per_time'] = df_exp['Peptide'].map(lambda pep: 
+#         sum(peptide_lkhd[t].get(pep, 0.0) for t in peptide_lkhd)
 #     )
 
-#     print(deuteration_df)
+#     # save
+#     df_exp.to_csv(args.output, index=False)
+#     print(f"Results written to {args.output!r}") 
 
-#     # Add synthetic 'noised' data to the DataFrame
-#     #deuteration_df = add_noised_data(deuteration_df, args.time_points)
-#     # benchmarking behavior
-#     #deuteration_df = add_noised_data_benchmark(deuteration_df, args.time_points)
-
-#     #print(deuteration_df)
-
-#     # Calculate the total likelihood for each time point and add to DataFrame
-#     #peptide_avg_likelihoods, overall_likelihood = total_likelihood(deuteration_df)
-#     # benchmarking behavior- make sure to toggle this!
-#     #peptide_avg_likelihoods, overall_likelihood, overall_avg_likelihood = total_likelihood_benchmark(deuteration_df)
-#     peptide_avg_likelihoods, overall_likelihood, overall_avg_likelihood = total_likelihood_benchmark(deuteration_df)
-    
-#     # Add the average likelihoods to the DataFrame
-#     for peptide, avg_likelihood in peptide_avg_likelihoods.items():
-#         deuteration_df.loc[deuteration_df['Peptide'] == peptide, 'Avg_Likelihood'] = avg_likelihood
-    
-#     # Add the overall likelihood to the DataFrame
-#     deuteration_df['Overall_Likelihood'] = overall_likelihood
-
-#     # Save the dataframe to a CSV file
-#     try:
-#         deuteration_df.to_csv(args.output, index=False)
-#         print(f"Results have been saved to {args.output}")
-#     except Exception as e:
-#         print(f"Error saving results to CSV: {e}")    
-
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
