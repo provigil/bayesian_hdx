@@ -72,7 +72,17 @@ def parse_arguments():
     #try this
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--single_file', type=str, help="Path to the text file containing PDB paths for both exp and model (uses same data set)")
+        #the single_file argument takes one positional argument: 
+            #SINGLE_FILE: an output data file of experimental HDX values in a CSV format
+            #this file is used for both experimental and model predictions
     group.add_argument('--dual_file', nargs=2, metavar=('exp_file', 'model_file'), help="Paths to two text files containing PDB paths: first for experimental data, second for model predictions")
+        #the dual_file argument takes two positional arguments: 
+            #exp_file: an output data file of experimental HDX values in a CSV format)
+                #the experimental data can also be generated from structure(s) if a text file with PDB path(s) is provided
+                #it should be formatted as:
+                    #peptide,30.0,60.0,180.0,600.0,1800.0,3600.0,7200.0
+                    #LQALAQNNTETSEKIQASGILQ,13.06,21.83,41.81,48.45,75.42,90.56,98.89
+            #model_file: a text file containing PDB path (single right now) for model predictions
     #
     parser.add_argument('-w', '--weights', type=float, nargs='+', help="List of weights for the structures (optional, required if multiple PDB paths are provided)")
     parser.add_argument('-o', '--output', type=str, required=True, help="Output file path to save results")
