@@ -1,35 +1,58 @@
 import argparse
 import numpy as np
 import pandas as pd
-from forward_model_mono import calc_incorporated_deuterium_with_weights, get_amino_acid_sequence
+from forward_model_mono import calc_incorporated_deuterium_with_weights, get_amino_acid_sequence, find_peptide_in_full_sequence
 import baker_hubbard_pf_mono as bh
 import tryptic_peptide_mono as tp
 from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data, total_likelihood_benchmark, likelihood, total_likelihood_test
+
+#usage: run_forward_mode_mono.py [-h] -d DEUTERIUM_FRACTION -t TIME_POINTS [TIME_POINTS ...] -p PH -temp TEMPERATURE (--single_file SINGLE_FILE | --dual_file exp_file model_file) [-w WEIGHTS [WEIGHTS ...]] -o OUTPUT [-l PEPTIDE_LIST] run_forward_mode_mono.py: error: the following arguments are required: -d/--deuterium_fraction, -t/--time_points, -p/--pH, -temp/--temperature, -o/--output
+#the way this runs right now is as follows:
+    #DEUTERIUM_FRACTION = 0.5; this is the fraction of deuterium incorporated
+    #TIME_POINTS = [0.0, 30.0, 60.0, 120.0, 240.0]; these are the time points at which the deuterium incorporation is measured
+    #PH = 7.0; this is the pH value for intrinsic rate calculation
+    #TEMPERATURE = 298.15; this is the temperature for intrinsic rate calculation
+
+#    --single_file SINGLE_FILE; this is the path to the text file containing PDB paths for both experimental and model data (uses same data set)
+#    --dual_file exp_file model_file; this is the path to the text file containing PDB paths for experimental data and model predictions
+#    -w WEIGHTS [WEIGHTS ...]; this is the list of weights for the structures (optional, required if multiple PDB paths are provided)
+#    -o OUTPUT; this is the output file path to save results
+#    -l PEPTIDE_LIST; this is the text file containing list of peptides (optional)
 
 def count_lines_in_file(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
         return len(lines)
     
-def load_experimental_csv(csv_path, time_points):
+def load_experimental_csv(csv_path, time_points, peptide_list=None):
+    """
+    Load a CSV with columns:
+        peptide, <t1>, <t2>, ..., <tn>
+    Optionally filter to only peptides in `peptide_list`.
+    Returns a DataFrame with:
+        Peptide, t1.0_percent, …, tn.0_percent
+    """
     df = pd.read_csv(csv_path)
     if 'peptide' not in df.columns:
         raise KeyError("CSV must have a 'peptide' column")
     df = df.rename(columns={'peptide': 'Peptide'})
 
+    # — optionally filter by peptide_list —
+    if peptide_list:
+        # read the list of peptides from file if a path was provided
+        with open(peptide_list, 'r') as f:
+            allowed = {line.strip() for line in f}
+        df = df[df['Peptide'].isin(allowed)]
+
     new_cols = []
     for t in time_points:
-        raw_col = str(t)  # matches your CSV headers: "0.0", "30.0", etc.
+        raw_col = str(t)          # matches your CSV headers "0.0", "30.0", …
         if raw_col not in df.columns:
             raise KeyError(f"Expected CSV column '{raw_col}' not found in {csv_path}")
-
-        # build the percent‐column name your likelihood code expects:
-        #   int(0.0) -> 0,  int(30.0) -> 30, etc.
         t_int   = int(float(t))
-        out_col = f"{t_int}.0_percent"  # e.g. "0.0_percent", "30.0_percent", ...
-
-        # scale the 0–1 fraction into 0–100
-        df[out_col] = df[raw_col]
+        out_col = f"{t_int}.0_percent"
+        # if your CSV is already in percent, skip the *100; otherwise multiply
+        df[out_col] = df[raw_col]  
         new_cols.append(out_col)
 
     return df[['Peptide'] + new_cols]
@@ -60,8 +83,13 @@ def parse_arguments():
 def generate_deuteration_df(file_path, peptide_list, deuterium_fraction, time_points, pH, temperature, weights):
     # If a peptide list is provided use it; otherwise generate tryptic peptides from the first PDB
     if peptide_list:
+        # — normalize your provided list to all‑caps, no extra whitespace —
         with open(peptide_list, 'r') as f:
-            peptides = [line.strip() for line in f]
+            peptides = [
+                line.strip().upper()
+                for line in f
+                if line.strip()
+            ]
     else:
         with open(file_path, 'r') as f:
             path_list = [line.strip() for line in f]
@@ -111,7 +139,11 @@ def main():
         print("Dual‐file mode (exp vs. model)")
         # if the experimental data is already a CSV, load it directly
         if exp_file.lower().endswith('.csv'):
-            df_exp = load_experimental_csv(exp_file, args.time_points)
+            df_exp = load_experimental_csv(
+                     exp_file,
+                     args.time_points,
+                     peptide_list=args.peptide_list
+                )
         else:
             df_exp = generate_deuteration_df(
                          exp_file, args.peptide_list,
