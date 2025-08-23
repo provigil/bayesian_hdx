@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import forward_model as fm
+import forward_model_mono as fm
 import scipy as sp 
 
 def noise_model(d_exp: float, d_model: float, sigma: float, A: float, B: float):
