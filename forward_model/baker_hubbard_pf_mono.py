@@ -93,52 +93,58 @@ def sigmoid_12_6(distance, k=1.0, d0=0.0):
 
 #count heavy atom contacts using a sigmoid function
 def count_heavy_atom_contacts_sigmoid(structure, k=1, d0=0.0, distance_threshold=6.5):
-    
-    #remove hydrogen atoms
-    atom_list = [atom for atom in structure.get_atoms() if atom.element not in ['H']]
-    
-    #remove heteroatoms
-    atom_list = [atom for atom in atom_list if atom.get_parent().id[0] == ' ']
-    
+    """
+    Count heavy atom contacts for each residue using a sigmoid-weighted scheme.
+    Skips non-standard residues, Proline, and residues missing backbone N.
+    Returns: {residue_number: contact_count}
+    """
+    # Remove hydrogens and non-standard residues from neighbor search
+    atom_list = [
+        atom for atom in structure.get_atoms()
+        if atom.element != 'H' and atom.get_parent().id[0] == ' '
+    ]
     ns = NeighborSearch(atom_list)
-    
     contact_counts = {}
-    
+
     for chain in structure.get_chains():
-        residues = list(chain)  
-        
+        residues = list(chain)
+
         for i, residue in enumerate(residues):
-            
-            if residue.id[0] != ' ': 
+            # Skip non-standard residues
+            if residue.id[0] != ' ':
                 continue
-            
-            residue_atoms = [atom for atom in residue if atom.element not in ['H']]
-            if not residue_atoms:  # Skip residue if it has no heavy atoms
+
+            # Skip Proline (no backbone amide H)
+            if residue.get_resname().upper() == 'PRO':
                 continue
-            
-            contacts = 0
-            #get the amide nitrogen atoms of the residue 
+
+            # Skip residues with no heavy atoms
+            residue_atoms = [atom for atom in residue if atom.element != 'H']
+            if not residue_atoms:
+                continue
+
+            # Skip residues missing backbone N atom
+            if 'N' not in residue:
+                continue
             residue_N = residue['N']
-            
-            #find atoms within the distance threshold of the amide nitrogen atom
+
+            contacts = 0
             neighbors = ns.search(residue_N.coord, level='A', radius=distance_threshold)
-            
+
             for neighbor in neighbors:
                 neighbor_residue = neighbor.get_parent()
+                if neighbor_residue not in residues:
+                    continue
+
                 neighbor_index = residues.index(neighbor_residue)
-                
-                #exclude the same residue and residues i-1, i-2, i+1, i+2
+
+                # Exclude self and i±1, i±2 neighbors
                 if neighbor_residue != residue and abs(neighbor_index - i) > 2:
                     distance = np.linalg.norm(neighbor.coord - residue_N.coord)
-                    #apply the sigmoid to the heavy atom contact count
                     contacts += sigmoid_12_6(distance, k, d0)
-            
-            #store the contact count for the residue
-            contact_counts[residue] = contacts
-    
-    #contact counts is dictionary of residue number and contact count
-    contact_counts = {residue.id[1]: count for residue, count in contact_counts.items()}
-    
+
+            contact_counts[residue.id[1]] = contacts
+
     return contact_counts
 
 def calculate_protection_factors(contacts, hbonds, bh = 0.35, bc = 2):
@@ -220,48 +226,3 @@ def estimate_protection_factors(file_path_or_list, bc=0.35, bh=2.0, distance_thr
     }
 
     return average_protection_factors
-
-#function to return the protection factors. input is a pdb file and the bc and bh values, output is a dictionary of residue number and protection factor 
-# def estimate_protection_factors(file_path, bc=0.35, bh=2.0, distance_threshold=5):
-#     if file_path.lower().endswith('.pdb'):
-#         pdb_files = [file_path]
-#     else:
-#         print(f"Loading PDB files from {file_path} v1")
-#         # Read the list of PDB filenames (assuming each line in file_path is a PDB file path)
-#         with open(file_path, 'r') as f:
-#             pdb_files = [line.strip() for line in f.readlines() if line.strip()]
-
-#     print(f"Loaded {len(pdb_files)} PDB files v2")
-
-#     residue_protection_sums = {}
-#     residue_counts = {}
-
-#     # Iterate over each PDB file
-#     for pdb_file in pdb_files:
-#         print(f"Loading structure from {pdb_file} v3")
-#         structure = load_pdb_bio(pdb_file)
-
-#         # Calculate the contact counts and hydrogen bond counts for the current structure
-#         contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold)
-#         h_bond_counts = calculate_hbond_number(pdb_file)
-
-#         # Iterate over the residues and calculate the protection factor
-#         for residue in contact_counts:
-#             h_bond_count = h_bond_counts.get(residue, 0)
-#             heavy_atom_count = contact_counts.get(residue, 0)
-#             protection_factor = bh * h_bond_count + bc * heavy_atom_count
-
-#             if residue not in residue_protection_sums:
-#                 residue_protection_sums[residue] = 0
-#                 residue_counts[residue] = 0
-
-#             residue_protection_sums[residue] += protection_factor
-#             residue_counts[residue] += 1
-
-#     # Calculate the average protection factor for each residue
-#     average_protection_factors = {
-#         residue: residue_protection_sums[residue] / residue_counts[residue]
-#         for residue in residue_protection_sums
-#     }
-
-#     return average_protection_factors

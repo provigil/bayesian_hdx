@@ -1,7 +1,7 @@
 import argparse
 import numpy as np
 import pandas as pd
-from forward_model_mono import calc_incorporated_deuterium_with_weights, get_amino_acid_sequence, find_peptide_in_full_sequence
+from forward_model_mono import calc_incorporated_deuterium_with_weights, get_amino_acid_sequence
 import baker_hubbard_pf_mono as bh
 import tryptic_peptide_mono as tp
 from hdx_likelihood_function_mono import calculate_sigma, total_likelihood, add_noised_data, total_likelihood_benchmark, likelihood, total_likelihood_test
