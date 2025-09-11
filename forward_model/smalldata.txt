@@ -1,0 +1,412 @@
+Results for expt_nsp2
+• Time 30s: 55 peptides, sum log‐lkhd = 86.58
+• Time 60s: 55 peptides, sum log‐lkhd = 87.24
+• Time 180s: 55 peptides, sum log‐lkhd = 110.36
+• Time 600s: 55 peptides, sum log‐lkhd = 234.00
+• Time 1800s: 55 peptides, sum log‐lkhd = 366.51
+• Time 3600s: 55 peptides, sum log‐lkhd = 416.75
+• Time 7200s: 55 peptides, sum log‐lkhd = 340.35
+
+------------------------------
+
+Results for cluster_all.c0.pdb
+Time30:55peptide,umlog‐lkhd  46.19
+Time60:55peptide,umlog‐lkhd  53.60
+Time180:55peptide,umlog‐lkhd  122.82
+Time600:55peptide,umlog‐lkhd  312.73
+Time1800:55peptide,umlog‐lkhd  474.15
+Time3600:55peptide,umlog‐lkhd  544.78
+Time7200:55peptide,umlog‐lkhd  398.41
+Total:  1952.67
+Avg:  5.0719
+Time30:55peptide,umlog‐lkhd  46.19
+Time60:55peptide,umlog‐lkhd  53.60
+Time180:55peptide,umlog‐lkhd  122.82
+Time600:55peptide,umlog‐lkhd  312.73
+Time1800:55peptide,umlog‐lkhd  474.15
+Time3600:55peptide,umlog‐lkhd  544.78
+Time7200:55peptide,umlog‐lkhd  398.41
+Total:  1952.67
+Avg:  5.0719
+------------------------------
+Results for cluster_all.c1.pdb
+Time30:55peptide,umlog‐lkhd  38.06
+Time60:55peptide,umlog‐lkhd  42.46
+Time180:55peptide,umlog‐lkhd  104.99
+Time600:55peptide,umlog‐lkhd  281.00
+Time1800:55peptide,umlog‐lkhd  446.57
+Time3600:55peptide,umlog‐lkhd  530.27
+Time7200:55peptide,umlog‐lkhd  395.42
+Total:  1838.77
+Avg:  4.7760
+Time30:55peptide,umlog‐lkhd  38.06
+Time60:55peptide,umlog‐lkhd  42.46
+Time180:55peptide,umlog‐lkhd  104.99
+Time600:55peptide,umlog‐lkhd  281.00
+Time1800:55peptide,umlog‐lkhd  446.57
+Time3600:55peptide,umlog‐lkhd  530.27
+Time7200:55peptide,umlog‐lkhd  395.42
+Total:  1838.77
+Avg:  4.7760
+------------------------------
+Results for cluster_all.c10.pdb
+Time30:55peptide,umlog‐lkhd  50.09
+Time60:55peptide,umlog‐lkhd  56.55
+Time180:55peptide,umlog‐lkhd  124.70
+Time600:55peptide,umlog‐lkhd  290.53
+Time1800:55peptide,umlog‐lkhd  441.65
+Time3600:55peptide,umlog‐lkhd  526.39
+Time7200:55peptide,umlog‐lkhd  403.47
+Total:  1893.37
+Avg:  4.9178
+Time30:55peptide,umlog‐lkhd  50.09
+Time60:55peptide,umlog‐lkhd  56.55
+Time180:55peptide,umlog‐lkhd  124.70
+Time600:55peptide,umlog‐lkhd  290.53
+Time1800:55peptide,umlog‐lkhd  441.65
+Time3600:55peptide,umlog‐lkhd  526.39
+Time7200:55peptide,umlog‐lkhd  403.47
+Total:  1893.37
+Avg:  4.9178
+------------------------------
+Results for cluster_all.c11.pdb
+Time30:55peptide,umlog‐lkhd  53.53
+Time60:55peptide,umlog‐lkhd  66.04
+Time180:55peptide,umlog‐lkhd  126.81
+Time600:55peptide,umlog‐lkhd  287.50
+Time1800:55peptide,umlog‐lkhd  430.66
+Time3600:55peptide,umlog‐lkhd  503.27
+Time7200:55peptide,umlog‐lkhd  375.37
+Total:  1843.18
+Avg:  4.7875
+Time30:55peptide,umlog‐lkhd  53.53
+Time60:55peptide,umlog‐lkhd  66.04
+Time180:55peptide,umlog‐lkhd  126.81
+Time600:55peptide,umlog‐lkhd  287.50
+Time1800:55peptide,umlog‐lkhd  430.66
+Time3600:55peptide,umlog‐lkhd  503.27
+Time7200:55peptide,umlog‐lkhd  375.37
+Total:  1843.18
+Avg:  4.7875
+------------------------------
+Results for cluster_all.c12.pdb
+Time30:55peptide,umlog‐lkhd  51.89
+Time60:55peptide,umlog‐lkhd  59.26
+Time180:55peptide,umlog‐lkhd  115.28
+Time600:55peptide,umlog‐lkhd  284.51
+Time1800:55peptide,umlog‐lkhd  445.11
+Time3600:55peptide,umlog‐lkhd  525.75
+Time7200:55peptide,umlog‐lkhd  390.65
+Total:  1872.45
+Avg:  4.8635
+Time30:55peptide,umlog‐lkhd  51.89
+Time60:55peptide,umlog‐lkhd  59.26
+Time180:55peptide,umlog‐lkhd  115.28
+Time600:55peptide,umlog‐lkhd  284.51
+Time1800:55peptide,umlog‐lkhd  445.11
+Time3600:55peptide,umlog‐lkhd  525.75
+Time7200:55peptide,umlog‐lkhd  390.65
+Total:  1872.45
+Avg:  4.8635
+------------------------------
+Results for cluster_all.c13.pdb
+Time30:55peptide,umlog‐lkhd  71.54
+Time60:55peptide,umlog‐lkhd  84.97
+Time180:55peptide,umlog‐lkhd  139.06
+Time600:55peptide,umlog‐lkhd  290.91
+Time1800:55peptide,umlog‐lkhd  428.50
+Time3600:55peptide,umlog‐lkhd  492.37
+Time7200:55peptide,umlog‐lkhd  380.55
+Total:  1887.90
+Avg:  4.9036
+Time30:55peptide,umlog‐lkhd  71.54
+Time60:55peptide,umlog‐lkhd  84.97
+Time180:55peptide,umlog‐lkhd  139.06
+Time600:55peptide,umlog‐lkhd  290.91
+Time1800:55peptide,umlog‐lkhd  428.50
+Time3600:55peptide,umlog‐lkhd  492.37
+Time7200:55peptide,umlog‐lkhd  380.55
+Total:  1887.90
+Avg:  4.9036
+------------------------------
+Results for cluster_all.c14.pdb
+Time30:55peptide,umlog‐lkhd  51.87
+Time60:55peptide,umlog‐lkhd  58.01
+Time180:55peptide,umlog‐lkhd  106.45
+Time600:55peptide,umlog‐lkhd  278.36
+Time1800:55peptide,umlog‐lkhd  438.95
+Time3600:55peptide,umlog‐lkhd  521.81
+Time7200:55peptide,umlog‐lkhd  388.21
+Total:  1843.66
+Avg:  4.7887
+Time30:55peptide,umlog‐lkhd  51.87
+Time60:55peptide,umlog‐lkhd  58.01
+Time180:55peptide,umlog‐lkhd  106.45
+Time600:55peptide,umlog‐lkhd  278.36
+Time1800:55peptide,umlog‐lkhd  438.95
+Time3600:55peptide,umlog‐lkhd  521.81
+Time7200:55peptide,umlog‐lkhd  388.21
+Total:  1843.66
+Avg:  4.7887
+------------------------------
+Results for cluster_all.c15.pdb
+Time30:55peptide,umlog‐lkhd  44.08
+Time60:55peptide,umlog‐lkhd  55.74
+Time180:55peptide,umlog‐lkhd  130.46
+Time600:55peptide,umlog‐lkhd  305.69
+Time1800:55peptide,umlog‐lkhd  457.57
+Time3600:55peptide,umlog‐lkhd  539.36
+Time7200:55peptide,umlog‐lkhd  404.38
+Total:  1937.28
+Avg:  5.0319
+Time30:55peptide,umlog‐lkhd  44.08
+Time60:55peptide,umlog‐lkhd  55.74
+Time180:55peptide,umlog‐lkhd  130.46
+Time600:55peptide,umlog‐lkhd  305.69
+Time1800:55peptide,umlog‐lkhd  457.57
+Time3600:55peptide,umlog‐lkhd  539.36
+Time7200:55peptide,umlog‐lkhd  404.38
+Total:  1937.28
+Avg:  5.0319
+------------------------------
+Results for cluster_all.c16.pdb
+Time30:55peptide,umlog‐lkhd  64.49
+Time60:55peptide,umlog‐lkhd  65.10
+Time180:55peptide,umlog‐lkhd  106.56
+Time600:55peptide,umlog‐lkhd  261.83
+Time1800:55peptide,umlog‐lkhd  419.19
+Time3600:55peptide,umlog‐lkhd  507.74
+Time7200:55peptide,umlog‐lkhd  386.87
+Total:  1811.79
+Avg:  4.7059
+Time30:55peptide,umlog‐lkhd  64.49
+Time60:55peptide,umlog‐lkhd  65.10
+Time180:55peptide,umlog‐lkhd  106.56
+Time600:55peptide,umlog‐lkhd  261.83
+Time1800:55peptide,umlog‐lkhd  419.19
+Time3600:55peptide,umlog‐lkhd  507.74
+Time7200:55peptide,umlog‐lkhd  386.87
+Total:  1811.79
+Avg:  4.7059
+------------------------------
+Results for cluster_all.c17.pdb
+Time30:55peptide,umlog‐lkhd  57.59
+Time60:55peptide,umlog‐lkhd  69.31
+Time180:55peptide,umlog‐lkhd  125.31
+Time600:55peptide,umlog‐lkhd  289.45
+Time1800:55peptide,umlog‐lkhd  441.46
+Time3600:55peptide,umlog‐lkhd  523.27
+Time7200:55peptide,umlog‐lkhd  393.30
+Total:  1899.68
+Avg:  4.9342
+Time30:55peptide,umlog‐lkhd  57.59
+Time60:55peptide,umlog‐lkhd  69.31
+Time180:55peptide,umlog‐lkhd  125.31
+Time600:55peptide,umlog‐lkhd  289.45
+Time1800:55peptide,umlog‐lkhd  441.46
+Time3600:55peptide,umlog‐lkhd  523.27
+Time7200:55peptide,umlog‐lkhd  393.30
+Total:  1899.68
+Avg:  4.9342
+------------------------------
+Results for cluster_all.c18.pdb
+Time30:55peptide,umlog‐lkhd  39.83
+Time60:55peptide,umlog‐lkhd  53.41
+Time180:55peptide,umlog‐lkhd  125.55
+Time600:55peptide,umlog‐lkhd  304.35
+Time1800:55peptide,umlog‐lkhd  465.65
+Time3600:55peptide,umlog‐lkhd  540.64
+Time7200:55peptide,umlog‐lkhd  392.90
+Total:  1922.33
+Avg:  4.9931
+Time30:55peptide,umlog‐lkhd  39.83
+Time60:55peptide,umlog‐lkhd  53.41
+Time180:55peptide,umlog‐lkhd  125.55
+Time600:55peptide,umlog‐lkhd  304.35
+Time1800:55peptide,umlog‐lkhd  465.65
+Time3600:55peptide,umlog‐lkhd  540.64
+Time7200:55peptide,umlog‐lkhd  392.90
+Total:  1922.33
+Avg:  4.9931
+------------------------------
+Results for cluster_all.c19.pdb
+Time30:55peptide,umlog‐lkhd  78.68
+Time60:55peptide,umlog‐lkhd  88.26
+Time180:55peptide,umlog‐lkhd  136.46
+Time600:55peptide,umlog‐lkhd  295.07
+Time1800:55peptide,umlog‐lkhd  453.19
+Time3600:55peptide,umlog‐lkhd  521.89
+Time7200:55peptide,umlog‐lkhd  414.29
+Total:  1987.82
+Avg:  5.1632
+Time30:55peptide,umlog‐lkhd  78.68
+Time60:55peptide,umlog‐lkhd  88.26
+Time180:55peptide,umlog‐lkhd  136.46
+Time600:55peptide,umlog‐lkhd  295.07
+Time1800:55peptide,umlog‐lkhd  453.19
+Time3600:55peptide,umlog‐lkhd  521.89
+Time7200:55peptide,umlog‐lkhd  414.29
+Total:  1987.82
+Avg:  5.1632
+------------------------------
+Results for cluster_all.c2.pdb
+Time30:55peptide,umlog‐lkhd  50.20
+Time60:55peptide,umlog‐lkhd  62.45
+Time180:55peptide,umlog‐lkhd  131.55
+Time600:55peptide,umlog‐lkhd  305.66
+Time1800:55peptide,umlog‐lkhd  456.73
+Time3600:55peptide,umlog‐lkhd  531.82
+Time7200:55peptide,umlog‐lkhd  402.34
+Total:  1940.74
+Avg:  5.0409
+Time30:55peptide,umlog‐lkhd  50.20
+Time60:55peptide,umlog‐lkhd  62.45
+Time180:55peptide,umlog‐lkhd  131.55
+Time600:55peptide,umlog‐lkhd  305.66
+Time1800:55peptide,umlog‐lkhd  456.73
+Time3600:55peptide,umlog‐lkhd  531.82
+Time7200:55peptide,umlog‐lkhd  402.34
+Total:  1940.74
+Avg:  5.0409
+------------------------------
+Results for cluster_all.c3.pdb
+Time30:55peptide,umlog‐lkhd  46.54
+Time60:55peptide,umlog‐lkhd  57.47
+Time180:55peptide,umlog‐lkhd  120.42
+Time600:55peptide,umlog‐lkhd  280.20
+Time1800:55peptide,umlog‐lkhd  439.52
+Time3600:55peptide,umlog‐lkhd  527.59
+Time7200:55peptide,umlog‐lkhd  405.53
+Total:  1877.28
+Avg:  4.8760
+Time30:55peptide,umlog‐lkhd  46.54
+Time60:55peptide,umlog‐lkhd  57.47
+Time180:55peptide,umlog‐lkhd  120.42
+Time600:55peptide,umlog‐lkhd  280.20
+Time1800:55peptide,umlog‐lkhd  439.52
+Time3600:55peptide,umlog‐lkhd  527.59
+Time7200:55peptide,umlog‐lkhd  405.53
+Total:  1877.28
+Avg:  4.8760
+------------------------------
+Results for cluster_all.c4.pdb
+Time30:55peptide,umlog‐lkhd  53.91
+Time60:55peptide,umlog‐lkhd  65.64
+Time180:55peptide,umlog‐lkhd  142.12
+Time600:55peptide,umlog‐lkhd  321.11
+Time1800:55peptide,umlog‐lkhd  477.38
+Time3600:55peptide,umlog‐lkhd  554.16
+Time7200:55peptide,umlog‐lkhd  420.55
+Total:  2034.87
+Avg:  5.2854
+Time30:55peptide,umlog‐lkhd  53.91
+Time60:55peptide,umlog‐lkhd  65.64
+Time180:55peptide,umlog‐lkhd  142.12
+Time600:55peptide,umlog‐lkhd  321.11
+Time1800:55peptide,umlog‐lkhd  477.38
+Time3600:55peptide,umlog‐lkhd  554.16
+Time7200:55peptide,umlog‐lkhd  420.55
+Total:  2034.87
+Avg:  5.2854
+------------------------------
+Results for cluster_all.c5.pdb
+Time30:55peptide,umlog‐lkhd  50.97
+Time60:55peptide,umlog‐lkhd  65.66
+Time180:55peptide,umlog‐lkhd  147.30
+Time600:55peptide,umlog‐lkhd  318.32
+Time1800:55peptide,umlog‐lkhd  461.91
+Time3600:55peptide,umlog‐lkhd  537.17
+Time7200:55peptide,umlog‐lkhd  405.76
+Total:  1987.09
+Avg:  5.1613
+Time30:55peptide,umlog‐lkhd  50.97
+Time60:55peptide,umlog‐lkhd  65.66
+Time180:55peptide,umlog‐lkhd  147.30
+Time600:55peptide,umlog‐lkhd  318.32
+Time1800:55peptide,umlog‐lkhd  461.91
+Time3600:55peptide,umlog‐lkhd  537.17
+Time7200:55peptide,umlog‐lkhd  405.76
+Total:  1987.09
+Avg:  5.1613
+------------------------------
+Results for cluster_all.c6.pdb
+Time30:55peptide,umlog‐lkhd  57.17
+Time60:55peptide,umlog‐lkhd  68.68
+Time180:55peptide,umlog‐lkhd  126.22
+Time600:55peptide,umlog‐lkhd  289.66
+Time1800:55peptide,umlog‐lkhd  451.99
+Time3600:55peptide,umlog‐lkhd  529.79
+Time7200:55peptide,umlog‐lkhd  413.37
+Total:  1936.88
+Avg:  5.0308
+Time30:55peptide,umlog‐lkhd  57.17
+Time60:55peptide,umlog‐lkhd  68.68
+Time180:55peptide,umlog‐lkhd  126.22
+Time600:55peptide,umlog‐lkhd  289.66
+Time1800:55peptide,umlog‐lkhd  451.99
+Time3600:55peptide,umlog‐lkhd  529.79
+Time7200:55peptide,umlog‐lkhd  413.37
+Total:  1936.88
+Avg:  5.0308
+------------------------------
+Results for cluster_all.c7.pdb
+Time30:55peptide,umlog‐lkhd  57.05
+Time60:55peptide,umlog‐lkhd  66.75
+Time180:55peptide,umlog‐lkhd  127.28
+Time600:55peptide,umlog‐lkhd  284.51
+Time1800:55peptide,umlog‐lkhd  437.54
+Time3600:55peptide,umlog‐lkhd  509.34
+Time7200:55peptide,umlog‐lkhd  381.20
+Total:  1863.66
+Avg:  4.8407
+Time30:55peptide,umlog‐lkhd  57.05
+Time60:55peptide,umlog‐lkhd  66.75
+Time180:55peptide,umlog‐lkhd  127.28
+Time600:55peptide,umlog‐lkhd  284.51
+Time1800:55peptide,umlog‐lkhd  437.54
+Time3600:55peptide,umlog‐lkhd  509.34
+Time7200:55peptide,umlog‐lkhd  381.20
+Total:  1863.66
+Avg:  4.8407
+------------------------------
+Results for cluster_all.c8.pdb
+Time30:55peptide,umlog‐lkhd  45.98
+Time60:55peptide,umlog‐lkhd  59.44
+Time180:55peptide,umlog‐lkhd  133.85
+Time600:55peptide,umlog‐lkhd  328.16
+Time1800:55peptide,umlog‐lkhd  504.59
+Time3600:55peptide,umlog‐lkhd  591.13
+Time7200:55peptide,umlog‐lkhd  445.03
+Total:  2108.17
+Avg:  5.4758
+Time30:55peptide,umlog‐lkhd  45.98
+Time60:55peptide,umlog‐lkhd  59.44
+Time180:55peptide,umlog‐lkhd  133.85
+Time600:55peptide,umlog‐lkhd  328.16
+Time1800:55peptide,umlog‐lkhd  504.59
+Time3600:55peptide,umlog‐lkhd  591.13
+Time7200:55peptide,umlog‐lkhd  445.03
+Total:  2108.17
+Avg:  5.4758
+------------------------------
+Results for cluster_all.c9.pdb
+Time30:55peptide,umlog‐lkhd  65.85
+Time60:55peptide,umlog‐lkhd  86.56
+Time180:55peptide,umlog‐lkhd  156.71
+Time600:55peptide,umlog‐lkhd  310.45
+Time1800:55peptide,umlog‐lkhd  458.65
+Time3600:55peptide,umlog‐lkhd  538.78
+Time7200:55peptide,umlog‐lkhd  412.25
+Total:  2029.24
+Avg:  5.2708
+Time30:55peptide,umlog‐lkhd  65.85
+Time60:55peptide,umlog‐lkhd  86.56
+Time180:55peptide,umlog‐lkhd  156.71
+Time600:55peptide,umlog‐lkhd  310.45
+Time1800:55peptide,umlog‐lkhd  458.65
+Time3600:55peptide,umlog‐lkhd  538.78
+Time7200:55peptide,umlog‐lkhd  412.25
+Total:  2029.24
+Avg:  5.2708
+------------------------------
+

@@ -385,7 +385,7 @@ def calc_incorporated_deuterium_with_weights(
     weights: list = None
 ):
     """
-    Calculates %D for all peptides at multiple time points, handling multiple PDBs with weights if provided.
+    calculates %D for all peptides at multiple time points, handling multiple PDBs with weights if provided.
     Uses get_amino_acid_sequence and find_peptide_in_full_sequence for modified residues.
     """
     # Read PDB file paths

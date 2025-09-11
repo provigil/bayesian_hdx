@@ -1,0 +1,180 @@
+Dual-file mode (exp vs. model)
+
+[get_amino_acid_sequence] Loaded '/Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb':
+  length=638 aa: AYTRYVDNNFCGPDGYPLECIKDLLARAGKASCTLSEQLDFIDTKRGVYCCREHEHEIAWYTERSEKSYELQTPFEIKLAKKFDTFNGECPNFVFPLNSIIKTIQPRVEKKKLDGFMGRIRSVYPVASPNECNQMCLSTLMKCDHCGETSWQTGDFVKATCEFCGTENLTKEGATTXGYLPQNAVVKIYCPACHNSEVGPEHSLAEYHNESGLKTILRKGGRTIAFGGXVFSYVGCHNKCAYWVPRASANIGCNHTGVVGEGSEGLNDNLLEILQKEKVNINIVGDFKLNEEIAIILASFSASTSAFVETVKGLDYKAFKQIVESCGNFKVTKGKAKKGAWNIGEQKSILSPLYAFASEAARVVRSIFSRTLETAQNSVRVLQKAAITILDGISQYSLRLIDAMMFTSDLATNNLVVMAYITGGVVQLTSQWLTNIFGTVYEKLKPVLDWLEEKFKEGVEFLRDGWEIVKFISTCACEIVGGQIVTCAKEIKESVQTFFKLVNKFLALCADSIIIGGAKLKALNLGETFVTHSKGLYRKCVKSREETGLLMPLKAPKEIIFLEGETLPTEVLTEEVVLKTGDLQPLEQPTSEAVEAPLVGTPVCINGLMLLEIKDTEKYCALAPNMMVTNNTFTLKGG
+
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Experimental DataFrame:
+                  Peptide  30.0_percent  ...  3600.0_percent  7200.0_percent
+0    YTRYVDNNFCGPDGYPLECI         20.72  ...          103.27           93.87
+1        KDLLARAGKASCTLSE         13.85  ...           88.41           88.07
+2     DLLARAGKASCTLSEQLDF         13.47  ...           81.74           83.02
+3    DLLARAGKASCTLSEQLDFI         14.85  ...           79.97           83.56
+4   DLLARAGKASCTLSEQLDFID         11.70  ...           80.80           82.04
+..                    ...           ...  ...             ...             ...
+57    FTNKGGVTPVCINGLMLLE         14.87  ...           91.35           86.09
+58       IKDTEKYCALAPNMMV         19.26  ...           94.37           91.71
+59       IKDTEKYCALAPNMMV         19.51  ...           99.06           95.32
+60        KDTEKYCALAPNMMV         20.10  ...           98.37           93.14
+61             TNNTFTLKGG         19.73  ...          100.49           94.93
+
+[62 rows x 8 columns]
+Model DataFrame (head):
+                 Peptide      30.0  ...  3600.0_percent  7200.0_percent
+0   YTRYVDNNFCGPDGYPLECI  3.904479  ...       38.928025       43.464491
+1       KDLLARAGKASCTLSE  4.636286  ...       61.227602       65.042080
+2    DLLARAGKASCTLSEQLDF  5.162505  ...       60.432052       64.576408
+3   DLLARAGKASCTLSEQLDFI  5.232758  ...       61.201012       64.769930
+4  DLLARAGKASCTLSEQLDFID  5.253157  ...       62.149636       65.791281
+
+[5 rows x 15 columns]
+Found 55 common peptides (first 10): ['YTRYVDNNFCGPDGYPLECI', 'KDLLARAGKASCTLSE', 'DLLARAGKASCTLSEQLDF', 'DLLARAGKASCTLSEQLDFI', 'DLLARAGKASCTLSEQLDFID', 'AGKASCTLSE', 'AGKASCTLSEQLDFIDTKRGVYCCR', 'DFIDTKRGVYCCREH', 'GVYCCREHEHEIAWYTERSEKS', 'YTERSEKSY']
+Evaluating time points: ['30', '60', '180', '600', '1800', '3600', '7200']
+• Time 30s: 55 peptides, sum log‐lkhd = 86.58
+• Time 60s: 55 peptides, sum log‐lkhd = 87.24
+• Time 180s: 55 peptides, sum log‐lkhd = 110.36
+• Time 600s: 55 peptides, sum log‐lkhd = 234.00
+• Time 1800s: 55 peptides, sum log‐lkhd = 366.51
+• Time 3600s: 55 peptides, sum log‐lkhd = 416.75
+• Time 7200s: 55 peptides, sum log‐lkhd = 340.35
+TOTAL log‐likelihood = 1641.79
+AVG   log‐likelihood = 4.2644
+Results written to '/Users/kehuang/Documents/projects/nsp2/analysis/hdx/nsp2_crystal.csv'
+Dual-file mode (exp vs. model)
+
+[get_amino_acid_sequence] Loaded '/Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb':
+  length=638 aa: AYTRYVDNNFCGPDGYPLECIKDLLARAGKASCTLSEQLDFIDTKRGVYCCREHEHEIAWYTERSEKSYELQTPFEIKLAKKFDTFNGECPNFVFPLNSIIKTIQPRVEKKKLDGFMGRIRSVYPVASPNECNQMCLSTLMKCDHCGETSWQTGDFVKATCEFCGTENLTKEGATTXGYLPQNAVVKIYCPACHNSEVGPEHSLAEYHNESGLKTILRKGGRTIAFGGXVFSYVGCHNKCAYWVPRASANIGCNHTGVVGEGSEGLNDNLLEILQKEKVNINIVGDFKLNEEIAIILASFSASTSAFVETVKGLDYKAFKQIVESCGNFKVTKGKAKKGAWNIGEQKSILSPLYAFASEAARVVRSIFSRTLETAQNSVRVLQKAAITILDGISQYSLRLIDAMMFTSDLATNNLVVMAYITGGVVQLTSQWLTNIFGTVYEKLKPVLDWLEEKFKEGVEFLRDGWEIVKFISTCACEIVGGQIVTCAKEIKESVQTFFKLVNKFLALCADSIIIGGAKLKALNLGETFVTHSKGLYRKCVKSREETGLLMPLKAPKEIIFLEGETLPTEVLTEEVVLKTGDLQPLEQPTSEAVEAPLVGTPVCINGLMLLEIKDTEKYCALAPNMMVTNNTFTLKGG
+
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide NLVVMAYITGGVVQLTSQWLN for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'NLVVMAYITGGVVQLTSQWLN' not found (with X→wildcard) in sequence.
+Error processing peptide VISTCACEIVGGQIVTCAKEIK for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'VISTCACEIVGGQIVTCAKEIK' not found (with X→wildcard) in sequence.
+Error processing peptide LMPKEIIFLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'LMPKEIIFLE' not found (with X→wildcard) in sequence.
+Error processing peptide DTETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'DTETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide ETEKYCALAPNMMVTNNT for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'ETEKYCALAPNMMVTNNT' not found (with X→wildcard) in sequence.
+Error processing peptide FTNKGGVTPVCINGLMLLE for /Users/kehuang/Documents/projects/nsp2/analysis/models/expt_complete.pdb: Peptide 'FTNKGGVTPVCINGLMLLE' not found (with X→wildcard) in sequence.
+Experimental DataFrame:
+                  Peptide  30.0_percent  ...  3600.0_percent  7200.0_percent
+0    YTRYVDNNFCGPDGYPLECI         20.72  ...          103.27           93.87
+1        KDLLARAGKASCTLSE         13.85  ...           88.41           88.07
+2     DLLARAGKASCTLSEQLDF         13.47  ...           81.74           83.02
+3    DLLARAGKASCTLSEQLDFI         14.85  ...           79.97           83.56
+4   DLLARAGKASCTLSEQLDFID         11.70  ...           80.80           82.04
+..                    ...           ...  ...             ...             ...
+57    FTNKGGVTPVCINGLMLLE         14.87  ...           91.35           86.09
+58       IKDTEKYCALAPNMMV         19.26  ...           94.37           91.71
+59       IKDTEKYCALAPNMMV         19.51  ...           99.06           95.32
+60        KDTEKYCALAPNMMV         20.10  ...           98.37           93.14
+61             TNNTFTLKGG         19.73  ...          100.49           94.93
+
+[62 rows x 8 columns]
+Model DataFrame (head):
+                 Peptide      30.0  ...  3600.0_percent  7200.0_percent
+0   YTRYVDNNFCGPDGYPLECI  3.904479  ...       38.928025       43.464491
+1       KDLLARAGKASCTLSE  4.636286  ...       61.227602       65.042080
+2    DLLARAGKASCTLSEQLDF  5.162505  ...       60.432052       64.576408
+3   DLLARAGKASCTLSEQLDFI  5.232758  ...       61.201012       64.769930
+4  DLLARAGKASCTLSEQLDFID  5.253157  ...       62.149636       65.791281
+
+[5 rows x 15 columns]
+Found 55 common peptides (first 10): ['YTRYVDNNFCGPDGYPLECI', 'KDLLARAGKASCTLSE', 'DLLARAGKASCTLSEQLDF', 'DLLARAGKASCTLSEQLDFI', 'DLLARAGKASCTLSEQLDFID', 'AGKASCTLSE', 'AGKASCTLSEQLDFIDTKRGVYCCR', 'DFIDTKRGVYCCREH', 'GVYCCREHEHEIAWYTERSEKS', 'YTERSEKSY']
+Evaluating time points: ['30', '60', '180', '600', '1800', '3600', '7200']
+• Time 30s: 55 peptides, sum log‐lkhd = 86.58
+• Time 60s: 55 peptides, sum log‐lkhd = 87.24
+• Time 180s: 55 peptides, sum log‐lkhd = 110.36
+• Time 600s: 55 peptides, sum log‐lkhd = 234.00
+• Time 1800s: 55 peptides, sum log‐lkhd = 366.51
+• Time 3600s: 55 peptides, sum log‐lkhd = 416.75
+• Time 7200s: 55 peptides, sum log‐lkhd = 340.35
+TOTAL log‐likelihood = 1641.79
+AVG   log‐likelihood = 4.2644
+Results written to '/Users/kehuang/Documents/projects/nsp2/analysis/hdx/nsp2_crystal.csv'
