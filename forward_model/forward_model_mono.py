@@ -362,7 +362,7 @@ def forward_model_sum_hdxer(peptide: str, protection_factors: dict,  time: float
             log_protection_factor = peptide_pf.get(i)
             protection_factor = np.exp(log_protection_factor)
             k_obs = intrinsic_rate / protection_factor
-            total_sum += numpy.exp(-k_obs * time)
+            total_sum += nuempy.exp(-k_obs * time)
         else:
             total_sum += 0
     return total_sum

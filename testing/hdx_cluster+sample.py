@@ -63,7 +63,7 @@ def upper_to_full_matrix(upper_rmsd, N):
     return full_matrix
 
 # Clustering
-def cluster_structures(rmsd_matrix, rmsd_cutoff, min_samples=1):
+def cluster_structures(rmsd_matrix, rmsd_cutoff, min_samples=50):
     """
     Perform DBSCAN clustering on the RMSD matrix.
     Forces at least one structure per cluster by setting min_samples=1.
@@ -101,8 +101,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cluster PDB structures by pairwise RMSD using DBSCAN.")
     parser.add_argument("pdb_files", nargs="+", help="PDB files or wildcard patterns (e.g., *.pdb)")
     parser.add_argument("--n_jobs", type=int, default=-1, help="Number of parallel jobs for RMSD computation")
+    parser.add_argument("--min_samples", type=int, default=2, help="Minimum number of points required to form a cluster")
     parser.add_argument("--n_points", type=int, default=25, help="Number of cutoff points to scan")
-    parser.add_argument("--save_hist", type=str, default="cluster_histogram.png", help="Path to save histogram image")
+#    parser.add_argument("--save_hist", type=str, default="cluster_histogram.png", help="Path to save histogram image")
     args = parser.parse_args()
 
     # Expand wildcards and check for PDB files
@@ -132,7 +133,7 @@ if __name__ == "__main__":
     max_coverage = -1
 
     for cutoff in cutoffs:
-        clusters, labels = cluster_structures(rmsd_matrix, rmsd_cutoff=cutoff, min_samples=1)
+        clusters, labels = cluster_structures(rmsd_matrix, rmsd_cutoff=cutoff, min_samples=args.min_samples)
         summary = summarize_clusters(clusters, labels, len(coords_array))
 
         print(f"RMSD Cutoff: {cutoff:.2f}, Cluster # = {summary['n_clusters']}, Coverage: {summary['coverage']*100:.1f}%, Noise: {summary['noise']}")
@@ -140,41 +141,41 @@ if __name__ == "__main__":
 # Hierarchical clustering
 # -------------------------
 # Convert RMSD matrix to condensed form for linkage (upper-triangle only)
-condensed_rmsd = squareform(rmsd_matrix)  # Required for linkage
+#condensed_rmsd = squareform(rmsd_matrix)  # Required for linkage
 
 # Perform hierarchical clustering
-Z = linkage(condensed_rmsd, method='average')  # 'average', 'single', 'complete' are options
+#Z = linkage(condensed_rmsd, method='average')  # 'average', 'single', 'complete' are options
 
 # Get the leaf order from hierarchical clustering
-leaf_order = leaves_list(Z)
+#leaf_order = leaves_list(Z)
 
 # Reorder the RMSD matrix according to the hierarchical clustering
-ordered_rmsd_matrix = rmsd_matrix[np.ix_(leaf_order, leaf_order)]
+#ordered_rmsd_matrix = rmsd_matrix[np.ix_(leaf_order, leaf_order)]
 
 
-plt.figure(figsize=(12, 6))
-dendrogram(Z, no_labels=True, color_threshold=0)
-plt.title("Pairwise RMSD", fontsize=20, fontweight='bold')
-plt.xlabel("Structures", fontsize=18, fontweight='bold')
-plt.ylabel("RMSD", fontsize=18, fontweight='bold')
-plt.show()
+#plt.figure(figsize=(12, 6))
+#dendrogram(Z, no_labels=True, color_threshold=0)
+#plt.title("Pairwise RMSD", fontsize=20, fontweight='bold')
+#plt.xlabel("Structures", fontsize=18, fontweight='bold')
+#plt.ylabel("RMSD", fontsize=18, fontweight='bold')
+#plt.show()
 
 
 # Reorder RMSD matrix according to hierarchical clustering
-white_red = LinearSegmentedColormap.from_list("white_red", ["white", "red"])
+#white_red = LinearSegmentedColormap.from_list("white_red", ["white", "red"])
 
-plt.figure(figsize=(10, 8))
-sns.heatmap(
-    ordered_rmsd_matrix,
-    cmap=white_red,
-    square=True,
-    cbar_kws={'label': 'RMSD'},
-    xticklabels=False,  # remove x-axis tick labels
-    yticklabels=False   # remove y-axis tick labels
-)
+#plt.figure(figsize=(10, 8))
+#sns.heatmap(
+#    ordered_rmsd_matrix,
+#    cmap=white_red,
+#    square=True,
+#    cbar_kws={'label': 'RMSD'},
+#    xticklabels=False,  # remove x-axis tick labels
+#    yticklabels=False   # remove y-axis tick labels
+#)
 
-plt.xlabel("Structures", fontsize=18, fontweight='bold')
-plt.ylabel("Structures", fontsize=18, fontweight='bold')
-plt.title("Pairwise RMSD Heatmap", fontsize=20, fontweight='bold')
+#plt.xlabel("Structures", fontsize=18, fontweight='bold')
+#plt.ylabel("Structures", fontsize=18, fontweight='bold')
+#plt.title("Pairwise RMSD Heatmap", fontsize=20, fontweight='bold')
 
-plt.show()
+#plt.show()
