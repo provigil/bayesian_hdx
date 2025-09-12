@@ -265,6 +265,7 @@ def get_amino_acid_sequence(path_to_pdb: str):
         'PTR': 'TYR',
     }
 
+    # Load structure using your Baker-Hubbard loader
     structure = bh.load_pdb_bio(path_to_pdb)
     seq = []
     unknown_residues = set()
@@ -272,17 +273,18 @@ def get_amino_acid_sequence(path_to_pdb: str):
     for model in structure:
         for chain in model:
             for residue in chain:
+                # Only consider standard residues (hetflag == ' ')
                 if residue.id[0] == ' ':
                     resname = MOD_MAP.get(residue.resname, residue.resname)
                     try:
-                        one_letter = seq1(resname)
+                        one_letter = seq1(resname)  # Convert three-letter to one-letter
                     except KeyError:
                         unknown_residues.add(resname)
                         one_letter = 'X'
                     seq.append(one_letter)
 
     full = ''.join(seq).upper()
-    full = ''.join([c for c in full if 'A' <= c <= 'Z'])
+    full = ''.join([c for c in full if 'A' <= c <= 'Z'])  # remove non-standard chars
 
     print(f"\n[get_amino_acid_sequence] Loaded '{path_to_pdb}':")
     print(f"  length={len(full)} aa: {full}\n")
@@ -362,7 +364,7 @@ def forward_model_sum_hdxer(peptide: str, protection_factors: dict,  time: float
             log_protection_factor = peptide_pf.get(i)
             protection_factor = np.exp(log_protection_factor)
             k_obs = intrinsic_rate / protection_factor
-            total_sum += nuempy.exp(-k_obs * time)
+            total_sum += numpy.exp(-k_obs * time)
         else:
             total_sum += 0
     return total_sum

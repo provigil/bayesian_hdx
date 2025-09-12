@@ -73,8 +73,6 @@ class HDXMultiNestSampler:
         self.logger = logging.getLogger(__name__)
     
     
-    
-    
     # Run Nested Sampling for a fixed number of states
     def run_nested_sampling(self, n_states, n_live_points=1000):
         self.current_n_states = n_states
