@@ -1,0 +1,2 @@
+/Users/kehuang/Documents/projects/HDX/yulia/models/stateH.pdb
+/Users/kehuang/Documents/projects/HDX/yulia/models/stateU.pdb
