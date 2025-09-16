@@ -35,31 +35,74 @@ def add_noised_data(df, time_points):
             df[noise_column] = df[time_float] + np.random.normal(loc=0, scale=0.05, size=len(df))
     return df
 
-def likelihood(d_exp, d_model, sigma, A=-0.1, B=1.2):
-    #sigma is the std deviation of the noise here
+import numpy as np
+import scipy as sp
 
-    #evaluate to make sure the result will make sense 
-    if sigma <= 0:
-        raise ValueError("Standard deviation must be positive")
+def likelihood(d_exp, d_model, sigma, A=-0.1, B=1.2):
+    """
+    Robust truncated normal likelihood function for HDX data.
+    Returns a small positive probability instead of raising an error when the truncation
+    range has negligible probability mass.
+    
+    Parameters
+    ----------
+    d_exp : float
+        Experimental deuteration fraction (0-1).
+    d_model : float
+        Modeled deuteration fraction (0-1).
+    sigma : float
+        Standard deviation of measurement noise.
+    A : float, default = -0.1
+        Lower truncation bound.
+    B : float, default = 1.2
+        Upper truncation bound.
+    """
+    # ---- 1) Safety checks and clamps ----
+    epsilon = 1e-12
+    min_sigma = 1e-6  # prevent sigma from being 0 or too small
+
+    # Coerce to floats
+    try:
+        d_exp = float(d_exp)
+        d_model = float(d_model)
+        sigma = float(sigma)
+    except Exception:
+        return 1e-300  # If inputs aren't numbers, return tiny probability
+
+    # Clamp deuteration values strictly inside [0,1]
+    d_exp = min(max(d_exp, epsilon), 1.0 - epsilon)
+    d_model = min(max(d_model, epsilon), 1.0 - epsilon)
+
+    # Ensure sigma never zero or negative
+    sigma = max(sigma, min_sigma)
+
     if A >= B:
-        raise ValueError("Lower bound must be less than upper bound")
-    
-    # Calculate normalization constant
-    Z = 2 * (sp.special.erf((B - d_model) / (sigma * np.sqrt(2))) - 
-               sp.special.erf((A - d_model) / (sigma * np.sqrt(2))))
-    
-    # Handle numerical issues for very small Z
-    if Z < 1e-10:
-        raise ValueError("Truncation range has negligible probability mass")
-    #return Z
-    
-    #get the other side of the likelihood function
-    leftfunction = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-(d_exp - d_model)**2 / (2 * sigma**2))
+        raise ValueError("Lower bound A must be less than upper bound B")
+
+    # ---- 2) Compute normalization constant ----
+    Z = 2 * (
+        sp.special.erf((B - d_model) / (sigma * np.sqrt(2))) -
+        sp.special.erf((A - d_model) / (sigma * np.sqrt(2)))
+    )
+
+    # ---- 3) Handle pathological Z ----
+    if not np.isfinite(Z) or Z <= 1e-12:
+        # Instead of raising an error, return tiny probability to penalize
+        return 1e-300
+
+    # ---- 4) Compute unnormalized Gaussian term ----
+    leftfunction = (
+        (1.0 / (sigma * np.sqrt(2 * np.pi))) *
+        np.exp(-0.5 * ((d_exp - d_model) / sigma) ** 2)
+    )
+
+    # ---- 5) Final probability ----
     result = leftfunction / Z
-    #get the left hand side of the likelihood function
-    #leftexp = (np.exp(np.power(d_exp - d_model, 2) / (2 * np.power(sigma, 2)))) / (np.sqrt(2 * np.pi) * sigma)
-    #result = leftexp/Z
-    #print(f"likelihood Result: {result}")
+
+    # Guard against NaN or negative values
+    if not np.isfinite(result) or result <= 0:
+        return 1e-300
+
     return (result)
 
 def total_likelihood(df_exp: pd.DataFrame, df_model: pd.DataFrame, sigma: float = 0.1):
@@ -125,6 +168,9 @@ def total_likelihood_test(
     df_model: pd.DataFrame,
     sigma: float = 0.1
 ):
+    # Ensure sigma has a minimum value to prevent numerical issues
+    sigma = max(sigma, 1e-6)  # Prevent sigma from being zero or too small
+    
     # ——————————————————————————————————————————————
     # 1) Dynamically pull all the "X.0_percent" columns, extract X as the string time-point
     #    Coerce each column name to str before testing for the suffix.

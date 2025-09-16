@@ -39,10 +39,10 @@ logger = logging.getLogger(__name__)
 # -------------------------
 # Global Defaults
 # -------------------------
-DEFAULT_MIN_SAMPLES = 2             # DBSCAN minimum samples per cluster
-DEFAULT_N_POINTS = 25               # Number of cutoffs to scan when tuning DBSCAN
-DEFAULT_DESIRED_MIN_CLUSTERS = 5    # Lower bound for desired cluster count
-DEFAULT_DESIRED_MAX_CLUSTERS = 10   # Upper bound for desired cluster count
+DEFAULT_MIN_SAMPLES = 5             # DBSCAN minimum samples per cluster
+DEFAULT_N_POINTS = 100               # Number of cutoffs to scan when tuning DBSCAN
+DEFAULT_DESIRED_MIN_CLUSTERS = 2    # Lower bound for desired cluster count
+DEFAULT_DESIRED_MAX_CLUSTERS = 2cd   # Upper bound for desired cluster count
 DEFAULT_OUTPUT_DIR = "./combined_output"
 
 # ============================================================================
@@ -247,20 +247,48 @@ def main():
     # Create output directory
     os.makedirs(args.outdir, exist_ok=True)
 
-    # Save representative PDB paths
+    # Save representative PDB paths (one per microstate)
     rep_txt_path = os.path.join(args.outdir, "representative_microstates.txt")
     save_microstate_representatives(microstates, pdb_files, rep_txt_path)
 
-    # Save full microstate membership mapping
-    with open(os.path.join(args.outdir, "microstates.json"), "w") as f:
+    # Save microstate membership mapping
+    microstates_json_path = os.path.join(args.outdir, "microstates.json")
+    with open(microstates_json_path, "w") as f:
         json.dump(microstates, f, indent=2)
+
+    logger.info("Microstate membership mapping saved to %s", microstates_json_path)
+
+    # ------------------------------
+    # NEW: Combined mapping for second script
+    # ------------------------------
+    representative_mapping = {}
+    with open(rep_txt_path, 'r') as f:
+        rep_paths = [line.strip() for line in f if line.strip()]
+
+    if len(rep_paths) != len(microstates):
+        raise ValueError(
+            f"Mismatch: {len(rep_paths)} representative structures vs {len(microstates)} microstates."
+        )
+
+    for ms_id, rep_path in zip(microstates.keys(), rep_paths):
+        representative_mapping[ms_id] = rep_path
+
+    combined_output = {
+        "microstates": microstates,  # membership mapping
+        "representatives": representative_mapping  # mapping of ID → representative PDB path
+    }
+
+    combined_json_path = os.path.join(args.outdir, "combined_microstates.json")
+    with open(combined_json_path, "w") as f:
+        json.dump(combined_output, f, indent=2)
+
+    logger.info("Combined microstate dictionary saved to %s", combined_json_path)
 
     logger.info("Pipeline finished. Results saved in %s", args.outdir)
 
 
 if __name__ == "__main__":
     main()
-
     
     # Hierarchical clustering
 # -------------------------

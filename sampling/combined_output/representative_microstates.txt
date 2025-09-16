@@ -1,2 +1,2 @@
-/Users/kehuang/Documents/projects/HDX/yulia/models/stateH.pdb
-/Users/kehuang/Documents/projects/HDX/yulia/models/stateU.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/cluster_all.c18.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-42-2.pdb

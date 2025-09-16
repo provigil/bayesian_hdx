@@ -1,8 +1,5 @@
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/cluster_all.c17.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/cluster_all.c6.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-3-1.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-62-1.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-13-1.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-84-1.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-7-2.pdb
-/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-90-1.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_15seq-79-2.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_15seq-91-1.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_15seq-57-2.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_10seq-54-3.pdb
+/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_5seq-24-1.pdb

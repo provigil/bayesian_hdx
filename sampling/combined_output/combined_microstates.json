@@ -1,0 +1,41 @@
+{
+  "microstates": {
+    "ms_0": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "ms_1": [
+      434,
+      466,
+      707,
+      717,
+      730,
+      787,
+      829,
+      853,
+      868,
+      942
+    ]
+  },
+  "representatives": {
+    "ms_0": "/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/cluster_all.c18.pdb",
+    "ms_1": "/Users/kehuang/Documents/projects/nsp2/analysis/models/model_dump/out_20seq-42-2.pdb"
+  }
+}
