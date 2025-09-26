@@ -5,15 +5,15 @@ run_clustering_and_multinest.py
 Pipeline Overview:
   1. Load multiple PDB structures and extract C-alpha coordinates.
   2. Compute a pairwise RMSD matrix to quantify structural similarity.
-  3. Run DBSCAN clustering with varying RMSD cutoffs to identify stable clusters
-     (microstates).
-  4. Save a text file containing representative PDB file paths for each cluster.
-  5. Convert clusters into microstates (representing unique structural ensembles).
+  3. Run DBSCAN clustering with varying RMSD cutoffs to identify stable clusters (microstates).
+  4. Determine a single representative structure for each microstate cluster.
+  5. Save representative structures and membership mappings for downstream analyses.
 
 Requirements:
   - Python packages: MDAnalysis, joblib, sklearn, pymultinest, numpy
-  
-Remember to update the parameters
+
+Example Usage:
+    python dbscan_microstate.py "path_to_PDBs/*.pdb" --min-samples 4 --n-points 50 --desired-min-clusters 2 --desired-max-clusters 6
 """
 
 # -------------------------
@@ -25,7 +25,7 @@ import argparse
 import json
 import logging
 from collections import defaultdict
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict
 import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis import rms
@@ -37,12 +37,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 # -------------------------
-# Global Defaults
+# Global Default Parameters
 # -------------------------
-DEFAULT_MIN_SAMPLES = 5             # DBSCAN minimum samples per cluster
-DEFAULT_N_POINTS = 100               # Number of cutoffs to scan when tuning DBSCAN
-DEFAULT_DESIRED_MIN_CLUSTERS = 2    # Lower bound for desired cluster count
-DEFAULT_DESIRED_MAX_CLUSTERS = 2cd   # Upper bound for desired cluster count
+DEFAULT_MIN_SAMPLES = 5               # DBSCAN minimum samples per cluster
+DEFAULT_N_POINTS = 100                # Number of RMSD cutoffs to scan
+DEFAULT_DESIRED_MIN_CLUSTERS = 2      # Lower bound for desired number of clusters
+DEFAULT_DESIRED_MAX_CLUSTERS = 6      # Upper bound for desired number of clusters
 DEFAULT_OUTPUT_DIR = "./combined_output"
 
 # ============================================================================
@@ -51,13 +51,10 @@ DEFAULT_OUTPUT_DIR = "./combined_output"
 def load_ca_coords(pdb_files: List[str]) -> np.ndarray:
     """
     Load C-alpha coordinates from multiple PDB files.
-
     Args:
         pdb_files: List of PDB file paths.
-
     Returns:
-        coords: Shape (N_structures, N_atoms, 3)
-    
+        coords: Shape (N_structures, N_CA_atoms, 3)
     Raises:
         ValueError: If structures contain inconsistent atom counts.
     """
@@ -78,9 +75,7 @@ def load_ca_coords(pdb_files: List[str]) -> np.ndarray:
 def pairwise_rmsd_upper(coords_array: np.ndarray, n_jobs: int = -1) -> np.ndarray:
     """
     Compute the upper-triangle of the RMSD matrix in parallel.
-
-    Returns:
-        1D array of RMSD values for triu indices.
+    RMSD measures structural similarity between pairs of structures.
     """
     N = coords_array.shape[0]
     if N < 2:
@@ -107,11 +102,14 @@ def upper_to_full_matrix(upper_rmsd: np.ndarray, N: int) -> np.ndarray:
 
 
 def force_two_clusters(pdb_files):
+    """
+    Special handling for the case where there are exactly two PDBs.
+    Automatically assign each to its own cluster.
+    """
     return {
         "ms_0": [0],
         "ms_1": [1]
     }
-
 
 # ============================================================================
 # SECTION 2. Clustering (DBSCAN)
@@ -130,11 +128,14 @@ def cluster_dbscan(rmsd_matrix: np.ndarray, rmsd_cutoff: float, min_samples: int
 
 def summarize_clusters(clusters, labels, n_structures):
     """
-    Summarize clustering results:
-      - number of clusters (excl. noise)
-      - cluster sizes
-      - noise count
-      - fraction of structures assigned to clusters
+    Summarize clustering results for logging and evaluation.
+    Returns:
+        {
+          "n_clusters": Number of clusters (excluding noise),
+          "cluster_sizes": List of cluster sizes,
+          "noise": Number of noise points,
+          "coverage": Fraction of points assigned to clusters
+        }
     """
     cluster_sizes = [len(v) for k, v in clusters.items() if k != "noise"]
     coverage = float(np.sum(labels != -1) / n_structures) if n_structures > 0 else 0.0
@@ -146,10 +147,9 @@ def summarize_clusters(clusters, labels, n_structures):
     }
 
 
-def find_cutoff(rmsd_matrix, n_points=DEFAULT_N_POINTS, min_samples=DEFAULT_MIN_SAMPLES,
-                desired_min=DEFAULT_DESIRED_MIN_CLUSTERS, desired_max=DEFAULT_DESIRED_MAX_CLUSTERS):
+def find_cutoff(rmsd_matrix, n_points, min_samples, desired_min, desired_max):
     """
-    Automatically search for the best RMSD cutoff for DBSCAN.
+    Automatically search for the best RMSD cutoff for DBSCAN by scanning a range of cutoffs.
     """
     N = rmsd_matrix.shape[0]
     if N < 2:
@@ -163,10 +163,14 @@ def find_cutoff(rmsd_matrix, n_points=DEFAULT_N_POINTS, min_samples=DEFAULT_MIN_
     for cutoff in cutoffs:
         clusters, labels = cluster_dbscan(rmsd_matrix, rmsd_cutoff=cutoff, min_samples=min_samples)
         summary = summarize_clusters(clusters, labels, N)
-        logger.info("cutoff=%.3f -> %d clusters, coverage=%.1f%%", cutoff, summary["n_clusters"], summary["coverage"] * 100.0)
+        logger.info(
+            "cutoff=%.3f -> %d clusters, coverage=%.1f%%",
+            cutoff, summary["n_clusters"], summary["coverage"] * 100.0
+        )
 
+        # Ideal match: cluster count falls within desired range
         if desired_min <= summary["n_clusters"] <= desired_max:
-            return cutoff, clusters, labels  # ideal match
+            return cutoff, clusters, labels
 
         # Fallback scoring: minimize distance to target range, maximize coverage
         dist = max(desired_min - summary["n_clusters"], summary["n_clusters"] - desired_max, 0)
@@ -174,14 +178,17 @@ def find_cutoff(rmsd_matrix, n_points=DEFAULT_N_POINTS, min_samples=DEFAULT_MIN_
         if best_score is None or score < best_score:
             best_score, best_candidate = score, (cutoff, clusters, labels, summary)
 
-    logger.warning("No cutoff produced desired cluster range, using fallback cutoff %.3f", best_candidate[0])
+    logger.warning(
+        "No cutoff produced desired cluster range, using fallback cutoff %.3f",
+        best_candidate[0]
+    )
     return best_candidate[0], best_candidate[1], best_candidate[2]
 
 
 def clusters_to_microstates(clusters, include_noise=False):
     """
-    Convert DBSCAN clusters into microstate dictionary.
-    Keys are 'ms_<cluster_id>' for clarity.
+    Convert DBSCAN clusters into a microstate dictionary.
+    Each cluster is labeled as 'ms_<cluster_id>'.
     """
     microstates = {}
     for k, members in clusters.items():
@@ -193,16 +200,18 @@ def clusters_to_microstates(clusters, include_noise=False):
     return microstates
 
 # ============================================================================
-# SECTION 3. Save representative PDBs
+# SECTION 3. Save Representative Structures
 # ============================================================================
 def save_microstate_representatives(microstates: Dict[str, List[int]], pdb_files: List[str], output_txt_path: str):
     """
-    Save representative PDB path for each microstate cluster into a text file.
+    Select and save a single representative PDB path for each microstate.
+    Representative = central member of the cluster.
     """
     with open(output_txt_path, 'w') as f:
         for cluster_id, indices in microstates.items():
             if not indices:
                 continue
+            # Choose central element (median index in sorted cluster list)
             central_idx = len(indices) // 2
             rep_idx = indices[central_idx]
             rep_path = pdb_files[rep_idx]
@@ -211,43 +220,53 @@ def save_microstate_representatives(microstates: Dict[str, List[int]], pdb_files
     logger.info(f"Representative PDB paths saved to: {output_txt_path}")
 
 # ============================================================================
-# SECTION 5. Main Orchestration
+# SECTION 4. Main Orchestration
 # ============================================================================
 def main():
-    parser = argparse.ArgumentParser(description="Cluster PDBs by RMSD and run MultiNest.")
+    parser = argparse.ArgumentParser(description="Cluster PDBs by RMSD and identify microstates.")
     parser.add_argument("pdb_files", nargs="+", help="PDB files or glob patterns (e.g. '*.pdb')")
     parser.add_argument("--outdir", default=DEFAULT_OUTPUT_DIR, help="Output directory")
+    parser.add_argument("--min-samples", type=int, default=DEFAULT_MIN_SAMPLES, help="DBSCAN minimum samples per cluster")
+    parser.add_argument("--n-points", type=int, default=DEFAULT_N_POINTS, help="Number of RMSD cutoffs to scan")
+    parser.add_argument("--desired-min-clusters", type=int, default=DEFAULT_DESIRED_MIN_CLUSTERS, help="Lower bound for desired cluster count")
+    parser.add_argument("--desired-max-clusters", type=int, default=DEFAULT_DESIRED_MAX_CLUSTERS, help="Upper bound for desired cluster count")
+
     args = parser.parse_args()
 
-    # 1. Expand PDB file globs
+    # Expand PDB file globs into full list
     pdb_files = sorted(set(sum([glob.glob(p) for p in args.pdb_files], [])))
     if not pdb_files:
         raise ValueError("No PDB files found.")
-
     logger.info("Loaded %d PDB structures.", len(pdb_files))
 
-    # 2. Special handling for only two PDBs
+    # Special case: exactly two PDB files
     if len(pdb_files) == 2:
         logger.info("Only two PDBs detected — forcing separate microstates.")
         microstates = force_two_clusters(pdb_files)
     else:
-        # 3. Load coordinates
+        # Load C-alpha coordinates
         coords = load_ca_coords(pdb_files)
 
-        # 4. Compute pairwise RMSD
+        # Compute pairwise RMSD matrix
         logger.info("Computing RMSD matrix...")
         upper = pairwise_rmsd_upper(coords)
         rmsd_mat = upper_to_full_matrix(upper, coords.shape[0])
 
-        # 5. Cluster with DBSCAN
-        cutoff, clusters, labels = find_cutoff(rmsd_mat)
+        # Run DBSCAN clustering
+        cutoff, clusters, labels = find_cutoff(
+            rmsd_mat,
+            n_points=args.n_points,
+            min_samples=args.min_samples,
+            desired_min=args.desired_min_clusters,
+            desired_max=args.desired_max_clusters
+        )
         microstates = clusters_to_microstates(clusters)
         logger.info("Identified %d microstates.", len(microstates))
 
     # Create output directory
     os.makedirs(args.outdir, exist_ok=True)
 
-    # Save representative PDB paths (one per microstate)
+    # Save representative PDBs
     rep_txt_path = os.path.join(args.outdir, "representative_microstates.txt")
     save_microstate_representatives(microstates, pdb_files, rep_txt_path)
 
@@ -255,12 +274,9 @@ def main():
     microstates_json_path = os.path.join(args.outdir, "microstates.json")
     with open(microstates_json_path, "w") as f:
         json.dump(microstates, f, indent=2)
-
     logger.info("Microstate membership mapping saved to %s", microstates_json_path)
 
-    # ------------------------------
-    # NEW: Combined mapping for second script
-    # ------------------------------
+    # Combine representatives + memberships into single JSON
     representative_mapping = {}
     with open(rep_txt_path, 'r') as f:
         rep_paths = [line.strip() for line in f if line.strip()]
@@ -274,8 +290,8 @@ def main():
         representative_mapping[ms_id] = rep_path
 
     combined_output = {
-        "microstates": microstates,  # membership mapping
-        "representatives": representative_mapping  # mapping of ID → representative PDB path
+        "microstates": microstates,
+        "representatives": representative_mapping
     }
 
     combined_json_path = os.path.join(args.outdir, "combined_microstates.json")
@@ -283,7 +299,6 @@ def main():
         json.dump(combined_output, f, indent=2)
 
     logger.info("Combined microstate dictionary saved to %s", combined_json_path)
-
     logger.info("Pipeline finished. Results saved in %s", args.outdir)
 
 

@@ -384,12 +384,16 @@ def calc_incorporated_deuterium_with_weights(
     pH: float,
     temperature: float,
     file_path: str,
-    weights: list = None
+    weights: list = None,
+    alpha: float = 2.0,
+    beta: float = 0.35
 ):
     """
-    calculates %D for all peptides at multiple time points, handling multiple PDBs with weights if provided.
-    Uses get_amino_acid_sequence and find_peptide_in_full_sequence for modified residues.
+    Calculate %D for all peptides at multiple time points, handling multiple PDBs with weights.
+    Protection factor is calculated as: PF = w*(#HBonds*alpha + #HAC*beta)
+    Supports multiple PDBs with weights (weights sum to 1).
     """
+
     # Read PDB file paths
     with open(file_path, 'r') as f:
         path_list = [line.strip() for line in f]
@@ -399,9 +403,11 @@ def calc_incorporated_deuterium_with_weights(
         weights = [1.0] * num_pdbs
     elif len(weights) != num_pdbs:
         raise ValueError("Number of weights must match PDB paths.")
+    # Normalize weights
     total_weight = sum(weights)
     weights = [w / total_weight for w in weights]
 
+    # Handle peptide list input
     if isinstance(peptide_list, str):
         with open(peptide_list, 'r') as f:
             all_peptides = [line.strip().upper() for line in f if line.strip()]
@@ -410,34 +416,74 @@ def calc_incorporated_deuterium_with_weights(
 
     deuteration_dict = {time: {} for time in time_points}
 
-    for path_to_pdb, weight in zip(path_list, weights):
-        all_pfs = bh.estimate_protection_factors(path_to_pdb)
+    # Load all PDBs and store their protection factor components
+    all_pdb_data = []
+    pdb_sequences = []
+
+    for path_to_pdb in path_list:
+        pdb_dict = bh.estimate_protection_factors(path_to_pdb)  # hbonds + hac for each residue
         full_sequence = get_amino_acid_sequence(path_to_pdb)
+        all_pdb_data.append(pdb_dict)
+        pdb_sequences.append(full_sequence)
+
+    for peptide in all_peptides:
+        # For simplicity, assume peptide exists in all PDB sequences
+        # Map sequence indices to PDB residue numbers using first PDB
+        full_sequence = pdb_sequences[0]
+        try:
+            start, end = find_peptide_in_full_sequence(peptide, full_sequence)
+        except ValueError as e:
+            print(f"Peptide '{peptide}' not found in first PDB sequence: {e}")
+            continue
+
+        # Build sequence_index -> PDB residue number map
+        pdb_keys_sorted = sorted(all_pdb_data[0].keys())
+        sequence_to_pdb = {}
+        seq_idx = 0
+        for pdb_residue in pdb_keys_sorted:
+            if seq_idx >= len(full_sequence):
+                break
+            sequence_to_pdb[seq_idx] = pdb_residue
+            seq_idx += 1
+
+        obs = is_observable_amide(peptide)
+        intrinsic_rates = get_sequence_intrinsic_rates(peptide, pH, temperature)
 
         for time in time_points:
-            for peptide in all_peptides:
-                try:
-                    intrinsic_rates = get_sequence_intrinsic_rates(peptide, pH, temperature)
-                    start, end = find_peptide_in_full_sequence(peptide, full_sequence)
-                    peptide_pf = filter_protection_factors((start, end), all_pfs)
-                    pfs = {idx - start: pf for idx, pf in peptide_pf.items()}
-                    obs = is_observable_amide(peptide)
-                    total_sum = 0.0
-                    for i, rate in enumerate(intrinsic_rates):
-                        if obs[i]:
-                            pf = np.exp(pfs.get(i, 0))
-                            k_obs = rate / pf
-                            total_sum += np.exp(-k_obs * time)
-                    num_obs = sum(obs)
-                    frag = weight * deuterium_fraction * (num_obs - total_sum)
-                    deuteration_dict[time][peptide] = deuteration_dict[time].get(peptide, 0.0) + frag
-                except Exception as e:
-                    print(f"Error processing peptide {peptide} for {path_to_pdb}: {e}")
+            total_sum = 0.0
+            for i, rate in enumerate(intrinsic_rates):
+                if not obs[i]:
+                    continue
 
+                # Compute weighted protection factor for this residue
+                weighted_pf = 0.0
+                seq_idx = start - 1 + i  # convert peptide-local index to full sequence index
+                if seq_idx not in sequence_to_pdb:
+                    print(f"Warning: Residue index {seq_idx} missing in PDB mapping for peptide '{peptide}'. Using PF=0.")
+                    pf_value = 0.0
+                else:
+                    pdb_residue_number = sequence_to_pdb[seq_idx]
+                    for pdb_dict, w in zip(all_pdb_data, weights):
+                        if pdb_residue_number in pdb_dict:
+                            hbonds = pdb_dict[pdb_residue_number]["hbonds"]
+                            hac = pdb_dict[pdb_residue_number]["hac"]
+                            weighted_pf += w * (alpha * hbonds + beta * hac)
+                        else:
+                            print(f"Warning: Residue {pdb_residue_number} missing in PDB data. Skipping.")
+
+                k_obs = rate / np.exp(weighted_pf)
+                total_sum += np.exp(-k_obs * time)
+
+            num_obs = sum(obs)
+            frag = deuterium_fraction * (num_obs - total_sum)
+            deuteration_dict[time][peptide] = frag
+
+    # Convert dictionary to DataFrame
     df = pd.DataFrame(deuteration_dict)
     df.reset_index(inplace=True)
     df.rename(columns={'index': 'Peptide'}, inplace=True)
 
+    # Compute percent deuteration columns
     for time in time_points:
         t_int = int(time)
         out_col = f"{t_int}.0_percent"

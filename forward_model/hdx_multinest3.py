@@ -240,13 +240,13 @@ class HDXMultiNestSampler:
 # ---------------------------------------------------------
 if __name__ == "__main__":
     # Peptide list
-    peptide_list_file = "/Users/kehuang/Documents/projects/nsp2/analysis/hdx/nsp2_pep.txt"
+    peptide_list_file = "/Users/kehuang/Documents/GitHub/bayesian_hdx/examples/4ex_model+search/pep_list.dat"
     with open(peptide_list_file) as f:
         peptide_list = [line.strip() for line in f if line.strip()]
 
     # Microstates & PDBs
-    microstates_file = "combined_output/microstates.json"
-    representatives_file = "combined_output/representative_microstates.txt"
+    microstates_file = "/Users/kehuang/Documents/GitHub/bayesian_hdx/examples/4ex_model+search/combined_output/microstates.json"
+    representatives_file = "/Users/kehuang/Documents/GitHub/bayesian_hdx/examples/4ex_model+search/combined_output/representative_microstates.txt"
 
     microstates, representative_pdbs = load_microstates_and_representatives(
         microstates_file,
@@ -255,7 +255,7 @@ if __name__ == "__main__":
 
     # HDX Likelihood
     hdx_likelihood = HDXMultiNestLikelihood(
-        exp_csv="/Users/kehuang/Documents/projects/nsp2/analysis/hdx/nsp2_hdx.csv",
+        exp_csv="/Users/kehuang/Documents/GitHub/bayesian_hdx/examples/4ex_model+search/avg.csv",
         time_points=[30, 60, 180, 600, 1800, 3600, 7200],
         deuterium_fraction=0.85,
         pH=7.0,

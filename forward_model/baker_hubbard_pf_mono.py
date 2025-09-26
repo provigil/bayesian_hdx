@@ -168,61 +168,75 @@ def estimate_protection_factors_sigmoid(h_bonds, contact_counts, bc=0.35, bh=2.0
 
     return protection_factors
 
-def estimate_protection_factors(file_path_or_list, bc=0.35, bh=2.0, distance_threshold=5):
-    # Ensure input is a list of PDB files
+def estimate_protection_factors(file_path_or_list, distance_threshold=5):
+    """
+    Estimate hydrogen bonds (HBonds) and heavy atom contacts (HAC) per residue
+    for one or more PDB files.
+
+    Parameters
+    ----------
+    file_path_or_list : str or list
+        - A single PDB filename,
+        - A file containing a list of PDB filenames,
+        - OR a list of PDB filenames.
+    distance_threshold : float
+        Distance cutoff for heavy atom contacts.
+
+    Returns
+    -------
+    dict
+        { residue_index: {"hbonds": int, "hac": int} }
+    """
+    # ---- 1. Load PDB file paths ----
     if isinstance(file_path_or_list, str):
         if file_path_or_list.lower().endswith('.pdb'):
             pdb_files = [file_path_or_list]
         else:
-            #print(f"Loading files from {file_path_or_list} [estimate_protection_factors] v1")
-            # Read the list of PDB filenames (assuming each line in file_path_or_list is a PDB file path)
             with open(file_path_or_list, 'r') as f:
                 pdb_files = [line.strip() for line in f.readlines() if line.strip()]
-                # Debugging: Print the list of PDB files
-                #print(f"PDB files read from list [estimate_protection_factors] v2: {pdb_files}")
     elif isinstance(file_path_or_list, list):
         pdb_files = file_path_or_list
     else:
         raise ValueError("Input must be a PDB filename, a file containing a list of PDB filenames, or a list of PDB filenames.")
 
-    #print(f"Loaded {len(pdb_files)} PDB files [estimate_protection_factors] v3")
-
-    residue_protection_sums = {}
+    # ---- 2. Initialize storage ----
+    residue_hbond_sums = {}
+    residue_hac_sums = {}
     residue_counts = {}
-
-    # Use a dictionary to store loaded structures to avoid reloading
     loaded_structures = {}
 
-    # Iterate over each PDB file
+    # ---- 3. Process each PDB ----
     for pdb_file in pdb_files:
         if pdb_file not in loaded_structures:
-            #print(f"load_pdb_bio {pdb_file} [estimate_protection_factors] v4")
             structure = load_pdb_bio(pdb_file)
             loaded_structures[pdb_file] = structure
         else:
             structure = loaded_structures[pdb_file]
 
-        # Calculate the contact counts and hydrogen bond counts for the current structure
+        # Calculate raw counts
         contact_counts = count_heavy_atom_contacts_sigmoid(structure, distance_threshold)
         h_bond_counts = calculate_hbond_number(pdb_file)
 
-        # Iterate over the residues and calculate the protection factor
+        # ---- 4. Aggregate counts ----
         for residue in contact_counts:
-            h_bond_count = h_bond_counts.get(residue, 0)
-            heavy_atom_count = contact_counts.get(residue, 0)
-            protection_factor = bh * h_bond_count + bc * heavy_atom_count
+            hbonds = h_bond_counts.get(residue, 0)
+            hac = contact_counts.get(residue, 0)
 
-            if residue not in residue_protection_sums:
-                residue_protection_sums[residue] = 0
+            if residue not in residue_hbond_sums:
+                residue_hbond_sums[residue] = 0
+                residue_hac_sums[residue] = 0
                 residue_counts[residue] = 0
 
-            residue_protection_sums[residue] += protection_factor
+            residue_hbond_sums[residue] += hbonds
+            residue_hac_sums[residue] += hac
             residue_counts[residue] += 1
 
-    # Calculate the average protection factor for each residue
-    average_protection_factors = {
-        residue: residue_protection_sums[residue] / residue_counts[residue]
-        for residue in residue_protection_sums
-    }
+    # ---- 5. Compute average counts per residue ----
+    result = {}
+    for residue in residue_counts:
+        result[residue] = {
+            "hbonds": residue_hbond_sums[residue] / residue_counts[residue],
+            "hac": residue_hac_sums[residue] / residue_counts[residue]
+        }
 
-    return average_protection_factors
+    return result
